@@ -4,6 +4,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] float _speed = 10;
+    [SerializeField] float _maxBoost = 10;
     [SerializeField] float _bounds_X = 15.5f, _bounds_Y = 7.5f;
     [SerializeField] float _fireRate = 0.25f;
     [SerializeField] int _lives = 3;
@@ -18,6 +19,7 @@ public class Player : MonoBehaviour
     bool _speedUp;
     bool _shield;
     float _nextFire;
+    float _currentBoost;
     AudioSource _audioSource;
 
     void Start()
@@ -28,6 +30,8 @@ public class Player : MonoBehaviour
 
         if (_audioSource == null)
             Debug.LogError("AudioSource = NULL.");
+
+        _currentBoost = _maxBoost;
     }
 
     void Update()
@@ -53,7 +57,16 @@ public class Player : MonoBehaviour
     {
         Vector2 direction = new (Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        transform.Translate((_speedUp ? _speed * 1.5f : _speed) * Time.deltaTime * direction);
+        //Creates a local variable to change player's speed based on powerups and input
+        float currentSpeed = _speed;
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        {
+            _currentBoost -= 1 * Time.deltaTime;
+            currentSpeed += 5;
+        }
+        if (_speedUp) currentSpeed *= 2f;
+
+        transform.Translate(currentSpeed * Time.deltaTime * direction);
 
         //Makes player object wrap when leaving the left and right boundaries
         if (transform.position.x < -_bounds_X) transform.position = new Vector2(_bounds_X, transform.position.y);

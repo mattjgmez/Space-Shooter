@@ -18,6 +18,11 @@ public class Projectile : MonoBehaviour
 
     void Update()
     {
+        HandleMovement();
+    }
+
+    void HandleMovement()
+    {
         transform.Translate(_speed * Time.deltaTime * (_isEnemy ? Vector2.down : Vector2.up));
 
         if (_isEnemy ? transform.position.y < -_maxY : transform.position.y > _maxY)

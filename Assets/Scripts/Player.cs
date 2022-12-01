@@ -22,7 +22,6 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        //Current position = new position (0, 0, 0)
         transform.position = Vector3.zero;
 
         _audioSource = GetComponent<AudioSource>();

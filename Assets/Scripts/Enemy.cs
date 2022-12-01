@@ -33,10 +33,7 @@ public class Enemy : MonoBehaviour
         if (Time.time > _laserCooldown)
             FireLaser();
 
-        transform.Translate(Vector2.down * _speed * Time.deltaTime);
-
-        if (transform.position.y < -_bounds_Y)
-            transform.position = new Vector2(Random.Range(-_bounds_X, _bounds_X), _bounds_Y);
+        HandleMovement();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -56,6 +53,14 @@ public class Enemy : MonoBehaviour
 
             TriggerDeath();
         }
+    }
+
+    void HandleMovement()
+    {
+        transform.Translate(Vector2.down * _speed * Time.deltaTime);
+
+        if (transform.position.y < -_bounds_Y)
+            transform.position = new Vector2(Random.Range(-_bounds_X, _bounds_X), _bounds_Y);
     }
 
     void FireLaser()

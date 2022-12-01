@@ -5,9 +5,11 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] float _speed;
     [SerializeField] float _bounds_X = 14, _bounds_Y = 10;
-    [SerializeField] AudioClip _explosionSound;
+    [SerializeField] AudioClip _explosionSound, _laserSound;
+    [SerializeField] GameObject _enemyLaserPrefab;
 
     bool _isDead;
+    float _laserCooldown;
     Player _player;
     Animator _anim;
     BoxCollider2D _collider;
@@ -19,6 +21,8 @@ public class Enemy : MonoBehaviour
         _anim = GetComponent<Animator>();
         _collider = GetComponent<BoxCollider2D>();
         _audioSource = GetComponent<AudioSource>();
+
+        _laserCooldown = Time.time + 1f;
     }
 
     void Update()
@@ -26,8 +30,8 @@ public class Enemy : MonoBehaviour
         if (_isDead)
             return;
 
-        //if laser cooldown finished
-        //fire laser
+        if (Time.time > _laserCooldown)
+            FireLaser();
 
         transform.Translate(Vector2.down * _speed * Time.deltaTime);
 
@@ -56,8 +60,9 @@ public class Enemy : MonoBehaviour
 
     void FireLaser()
     {
-        //fire laser
-        //refresh laser cooldown
+        _laserCooldown = Time.time + Random.Range(3f, 7f);
+        Instantiate(_enemyLaserPrefab, transform.position, Quaternion.identity);
+        _audioSource.PlayOneShot(_laserSound);
     }
 
     void TriggerDeath()

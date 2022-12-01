@@ -268,3 +268,5 @@ MonoBehaviour:
   _bounds_X: 14
   _bounds_Y: 10
   _explosionSound: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
+  _laserSound: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _enemyLaserPrefab: {fileID: 6628742992468292316, guid: 2eff5a50d27378942aed63510975365a, type: 3}

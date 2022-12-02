@@ -25,7 +25,7 @@ public class Projectile : MonoBehaviour
     {
         transform.Translate(_speed * Time.deltaTime * (_isEnemy ? Vector2.down : Vector2.up));
 
-        if (_isEnemy ? transform.position.y < -_maxY : transform.position.y > _maxY)
+        if (transform.position.y < -_maxY || transform.position.y > _maxY)
         {
             if (transform.parent != null)
                 Destroy(transform.parent.gameObject);

@@ -6,9 +6,9 @@ public class Player : MonoBehaviour
 {
     [SerializeField] float _speed = 10;
     [SerializeField] float _speedIncreaseTotal;
-    [SerializeField] float _boostAmount = 5;
-    [SerializeField] float _boostDuration = 2;
-    [SerializeField] float _boostCooldown = 5;
+    [SerializeField] float _dashAmount = 5;
+    [SerializeField] float _dashDuration = 2;
+    [SerializeField] float _dashCooldown = 5;
     [SerializeField] float _bounds_X = 15.5f, _bounds_Y = 7.5f;
     [SerializeField] float _fireRate = 0.25f;
     [SerializeField] int _lives = 3;
@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
 
     bool _tripleShot;
     bool _shield;
-    bool _startBoost, _canBoost = true;
+    bool _canDash = true;
     float _nextFire;
     AudioSource _audioSource;
     ParticleSystem _particleSystem;
@@ -41,8 +41,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) && _canBoost)
-            StartCoroutine(BoostCoroutine());
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _canDash)
+            StartCoroutine(DashCoroutine());
 
         HandleMovement();
 
@@ -76,19 +76,18 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -_bounds_Y, _bounds_Y), 0);
     }
 
-    IEnumerator BoostCoroutine()
+    IEnumerator DashCoroutine()
     {
-        _startBoost = false;
-        _canBoost = false;
-        _speedIncreaseTotal += _boostAmount;
+        _canDash = false;
+        _speedIncreaseTotal += _dashAmount;
         _particleSystem.Play();
 
-        yield return new WaitForSeconds(_boostDuration);
-        _speedIncreaseTotal -= _boostAmount;
+        yield return new WaitForSeconds(_dashDuration);
+        _speedIncreaseTotal -= _dashAmount;
         _particleSystem.Stop();
 
-        yield return new WaitForSeconds(_boostCooldown);
-        _canBoost = true;
+        yield return new WaitForSeconds(_dashCooldown);
+        _canDash = true;
     }
 
     public void TakeDamage()

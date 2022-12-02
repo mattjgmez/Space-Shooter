@@ -1,10 +1,14 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] float _speed = 10;
-    [SerializeField] float _maxBoost = 10;
+    [SerializeField] float _speedIncreaseTotal;
+    [SerializeField] float _boostAmount = 5;
+    [SerializeField] float _boostDuration = 2;
+    [SerializeField] float _boostCooldown = 5;
     [SerializeField] float _bounds_X = 15.5f, _bounds_Y = 7.5f;
     [SerializeField] float _fireRate = 0.25f;
     [SerializeField] int _lives = 3;
@@ -16,26 +20,30 @@ public class Player : MonoBehaviour
     [SerializeField] AudioClip _laserSound, _explosionSound;
 
     bool _tripleShot;
-    bool _speedUp;
     bool _shield;
+    bool _startBoost, _canBoost = true;
     float _nextFire;
-    float _currentBoost;
     AudioSource _audioSource;
+    ParticleSystem _particleSystem;
 
     void Start()
     {
         transform.position = Vector3.zero;
 
         _audioSource = GetComponent<AudioSource>();
+        _particleSystem = GetComponent<ParticleSystem>();
 
         if (_audioSource == null)
             Debug.LogError("AudioSource = NULL.");
-
-        _currentBoost = _maxBoost;
+        if (_particleSystem == null)
+            Debug.LogError("ParticleSystem = NULL.");
     }
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _canBoost)
+            StartCoroutine(BoostCoroutine());
+
         HandleMovement();
 
         if (Input.GetKey(KeyCode.Space) && Time.time > _nextFire)
@@ -57,15 +65,7 @@ public class Player : MonoBehaviour
     {
         Vector2 direction = new (Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        //Creates a local variable to change player's speed based on powerups and input
-        float currentSpeed = _speed;
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-        {
-            _currentBoost -= 1 * Time.deltaTime;
-            currentSpeed += 5;
-        }
-        if (_speedUp) currentSpeed *= 2f;
-
+        float currentSpeed = _speed + _speedIncreaseTotal;
         transform.Translate(currentSpeed * Time.deltaTime * direction);
 
         //Makes player object wrap when leaving the left and right boundaries
@@ -74,6 +74,21 @@ public class Player : MonoBehaviour
 
         //Keeps player within the top and bottom of the screen
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -_bounds_Y, _bounds_Y), 0);
+    }
+
+    IEnumerator BoostCoroutine()
+    {
+        _startBoost = false;
+        _canBoost = false;
+        _speedIncreaseTotal += _boostAmount;
+        _particleSystem.Play();
+
+        yield return new WaitForSeconds(_boostDuration);
+        _speedIncreaseTotal -= _boostAmount;
+        _particleSystem.Stop();
+
+        yield return new WaitForSeconds(_boostCooldown);
+        _canBoost = true;
     }
 
     public void TakeDamage()
@@ -102,6 +117,7 @@ public class Player : MonoBehaviour
             _leftEngineFire.SetActive(true);
     }
 
+    #region Powerup Methods
     public void TripleShotEnable()
     {
         _tripleShot = true;
@@ -116,14 +132,14 @@ public class Player : MonoBehaviour
 
     public void SpeedUpEnable()
     {
-        _speedUp = true;
+        _speedIncreaseTotal += 10;
         StartCoroutine(SpeedUpDisable());
     }
 
     IEnumerator SpeedUpDisable()
     {
         yield return new WaitForSeconds(3);
-        _speedUp = false;
+        _speedIncreaseTotal -= 10;
     }
 
     public void ShieldEnable()
@@ -132,6 +148,7 @@ public class Player : MonoBehaviour
         _shieldObject.GetComponent<SpriteRenderer>().enabled = true;
         StartCoroutine(SpeedUpDisable());
     }
+    #endregion
 
     public void SetScore(int amount)
     {

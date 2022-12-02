@@ -37,7 +37,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         //Spawns a powerup every 6 to 8 seconds.
         while (!_stopSpawning)
         {
-            Vector3 spawnPos = new (Random.Range(-15, 15), 10, 0);
+            Vector3 spawnPos = new (Random.Range(-bounds_X, bounds_X), 10, 0);
             Instantiate(_PowerupPrefabs[Random.Range(0, _PowerupPrefabs.Length)], spawnPos, Quaternion.identity);
 
             yield return new WaitForSeconds(Random.Range(6, 9));

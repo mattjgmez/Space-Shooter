@@ -18,13 +18,17 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject _shieldObject;
     [SerializeField] GameObject _rightEngineFire, _leftEngineFire;
     [SerializeField] AudioClip _laserSound, _explosionSound;
+    [SerializeField] AudioClip _shieldHit, _shieldDestroyed;
 
     bool _tripleShot;
-    bool _shield;
     bool _canDash = true;
+    bool _shield;
+    int _shieldHealth;
     float _nextFire;
     AudioSource _audioSource;
-    ParticleSystem _particleSystem;
+    ParticleSystem _particleSystem, _shieldParticleSystem;
+    SpriteRenderer _shieldSprite;
+    Color32 _shieldColor;
 
     void Start()
     {
@@ -32,6 +36,9 @@ public class Player : MonoBehaviour
 
         _audioSource = GetComponent<AudioSource>();
         _particleSystem = GetComponent<ParticleSystem>();
+        _shieldSprite = _shieldObject.GetComponent<SpriteRenderer>();
+        _shieldParticleSystem = _shieldObject.GetComponent<ParticleSystem>();
+        _shieldColor = _shieldSprite.color;
 
         if (_audioSource == null)
             Debug.LogError("AudioSource = NULL.");
@@ -80,13 +87,13 @@ public class Player : MonoBehaviour
     {
         _canDash = false;
         _speedIncreaseTotal += _dashAmount;
-        _particleSystem.Play();
+        _particleSystem.Play(false);
 
         yield return new WaitForSeconds(_dashDuration);
         _speedIncreaseTotal -= _dashAmount;
         _particleSystem.Stop();
 
-        yield return new WaitForSeconds(_dashCooldown);
+        yield return new WaitForSeconds(_dashCooldown -= _dashDuration);
         _canDash = true;
     }
 
@@ -94,8 +101,21 @@ public class Player : MonoBehaviour
     {
         if (_shield)
         {
-            _shield = false;
-            _shieldObject.GetComponent<SpriteRenderer>().enabled = false;
+            _shieldHealth -= 1;
+            if (_shieldHealth > 0)
+            {
+                _shieldColor.a -= 85;
+                _shieldSprite.color = _shieldColor;
+                _audioSource.PlayOneShot(_shieldHit);
+            }
+            if (_shieldHealth == 0)
+            {
+                _shieldColor.a = 0;
+                _shieldSprite.color = _shieldColor;
+                _shieldParticleSystem.Play();
+                _audioSource.PlayOneShot(_shieldDestroyed);
+                _shield = false;
+            }
             return;
         }
 
@@ -144,8 +164,9 @@ public class Player : MonoBehaviour
     public void ShieldEnable()
     {
         _shield = true;
-        _shieldObject.GetComponent<SpriteRenderer>().enabled = true;
-        StartCoroutine(SpeedUpDisable());
+        _shieldHealth = 3;
+        _shieldColor.a = 255;
+        _shieldSprite.color = _shieldColor;
     }
     #endregion
 

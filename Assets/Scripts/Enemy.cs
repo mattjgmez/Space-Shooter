@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
         if (_isDead)
             return;
 
-        if (Time.time > _laserCooldown)
+        if (Time.time > _laserCooldown && _player)
             FireLaser();
 
         HandleMovement();

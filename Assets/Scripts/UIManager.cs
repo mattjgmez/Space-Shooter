@@ -5,9 +5,10 @@ using TMPro;
 
 public class UIManager : MonoSingleton<UIManager>
 {
-    [SerializeField] TMP_Text _scoreText, _gameOverText, _restartText;
+    [SerializeField] TMP_Text _scoreText;
     [SerializeField] Sprite[] _liveSprites;
     [SerializeField] Image _liveImage;
+    [SerializeField] GameObject _pauseUI, _gameOverUI;
 
     bool _gameOver;
 
@@ -31,18 +32,22 @@ public class UIManager : MonoSingleton<UIManager>
 
     public void ShowGameOverText()
     {
-        _gameOverText.enabled = true;
-        _restartText.enabled = true;
+        _gameOverUI.SetActive(true);
         _gameOver = true;
         StartCoroutine(GameOverTextBlink());
+    }
+
+    public void TogglePauseMenu()
+    {
+        _pauseUI.SetActive(!_pauseUI.activeSelf);
+        Time.timeScale = _pauseUI.activeSelf ? 0f : 1f;
     }
 
     IEnumerator GameOverTextBlink()
     {
         while (_gameOver)
         {
-            _gameOverText.enabled = !_gameOverText.enabled;
-            _restartText.enabled = !_restartText.enabled;
+            _gameOverUI.SetActive(!_gameOverUI.activeSelf);
             yield return new WaitForSeconds(0.5f);
         }
     }

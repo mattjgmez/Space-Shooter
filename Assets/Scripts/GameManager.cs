@@ -11,19 +11,30 @@ public class GameManager : MonoSingleton<GameManager>
     {
         if (Input.GetKeyDown(KeyCode.R) && _gameOver)
         {
-            _gameOver = false;
-            SceneManager.LoadScene(1); //Loads current scene
+            Restart();
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Application.Quit();
-            Debug.Log("Game exiting.");
+            UIManager.Instance.TogglePauseMenu();
         }
     }
 
     public void GameOver()
     {
         _gameOver = true;
+    }
+
+    public void BackToMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(0);
+    }
+
+    public void Restart()
+    {
+        _gameOver = false;
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(1); //Loads current scene
     }
 }

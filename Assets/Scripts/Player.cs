@@ -11,19 +11,24 @@ public class Player : MonoBehaviour
     [SerializeField] float _dashCooldown = 5;
     [SerializeField] float _bounds_X = 15.5f, _bounds_Y = 7.5f;
     [SerializeField] float _fireRate = 0.25f;
+    [SerializeField] float _reloadTime = 3f;
     [SerializeField] int _lives = 3;
-    [SerializeField] int _score;
+    [SerializeField] int _score = 0;
+    [SerializeField] int _maxAmmo = 15;
     [SerializeField] GameObject _projectilePrefab;
     [SerializeField] GameObject _tripleShotPrefab; 
     [SerializeField] GameObject _shieldObject;
     [SerializeField] GameObject _rightEngineFire, _leftEngineFire;
     [SerializeField] AudioClip _laserSound, _explosionSound;
     [SerializeField] AudioClip _shieldHit, _shieldDestroyed;
+    [SerializeField] AudioClip _reloadSound;
 
     bool _tripleShot;
     bool _canDash = true;
     bool _shield;
+    bool _reloading;
     int _shieldHealth;
+    int _currentAmmo;
     float _nextFire;
     AudioSource _audioSource;
     ParticleSystem _particleSystem, _shieldParticleSystem;
@@ -38,7 +43,10 @@ public class Player : MonoBehaviour
         _particleSystem = GetComponent<ParticleSystem>();
         _shieldSprite = _shieldObject.GetComponent<SpriteRenderer>();
         _shieldParticleSystem = _shieldObject.GetComponent<ParticleSystem>();
+
         _shieldColor = _shieldSprite.color;
+        _currentAmmo = _maxAmmo;
+        UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
 
         if (_audioSource == null)
             Debug.LogError("AudioSource = NULL.");
@@ -53,17 +61,31 @@ public class Player : MonoBehaviour
 
         HandleMovement();
 
-        if (Input.GetKey(KeyCode.Space) && Time.time > _nextFire)
+        if (Input.GetKey(KeyCode.Space) && Time.time > _nextFire && !_reloading)
             HandleShooting();
     }
 
     void HandleShooting()
     {
+        if (_currentAmmo <= 0)
+            return;        
+        
         _nextFire = Time.time + _fireRate;
 
         //Instantiates triple shot prefab if powerup is active, otherwise fires single laser prefab
-        if (_tripleShot) Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
-        else Instantiate(_projectilePrefab, transform.position + new Vector3(0, 1.07f, 0f), Quaternion.identity);
+        //Powerup shots ignore ammo count
+        if (_tripleShot) 
+            Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
+        else
+        {
+            _currentAmmo--;
+            UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
+
+            if (_currentAmmo <= 0)
+                StartCoroutine(ReloadCoroutine());
+
+            Instantiate(_projectilePrefab, transform.position + new Vector3(0, 1.07f, 0f), Quaternion.identity);
+        }
 
         _audioSource.PlayOneShot(_laserSound);
     }
@@ -97,11 +119,31 @@ public class Player : MonoBehaviour
         _canDash = true;
     }
 
+    IEnumerator ReloadCoroutine()
+    {
+        _reloading = true;
+        yield return new WaitForSeconds(0.2f);
+
+        UIManager.Instance.UpdateAmmo("Reloading .");
+        yield return new WaitForSeconds(_reloadTime / 3);
+
+        UIManager.Instance.UpdateAmmo("Reloading . .");
+        yield return new WaitForSeconds(_reloadTime / 3);
+
+        UIManager.Instance.UpdateAmmo("Reloading . . .");
+        yield return new WaitForSeconds(_reloadTime / 3);
+
+        _currentAmmo = _maxAmmo;
+        _reloading = false;
+        UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
+        _audioSource.PlayOneShot(_reloadSound);
+    }
+
     public void TakeDamage()
     {
         if (_shield)
         {
-            _shieldHealth -= 1;
+            _shieldHealth--;
             if (_shieldHealth > 0)
             {
                 _shieldColor.a -= 85;
@@ -119,7 +161,7 @@ public class Player : MonoBehaviour
             return;
         }
 
-        _lives -= 1;
+        _lives--;
         UIManager.Instance.UpdateLives(_lives);
 
         if (_lives < 1)
@@ -136,11 +178,29 @@ public class Player : MonoBehaviour
             _leftEngineFire.SetActive(true);
     }
 
+
     #region Powerup Methods
-    public void TripleShotEnable()
+    public void EnablePowerup(int PowerupID)
     {
-        _tripleShot = true;
-        StartCoroutine(TripleShotDisable());
+        switch (PowerupID)
+        {
+            case 0: //Triple Shot
+                _tripleShot = true;
+                StartCoroutine(TripleShotDisable());
+                break;
+
+            case 1: //Speedup
+                _speedIncreaseTotal += 10;
+                StartCoroutine(SpeedUpDisable());
+                break;
+
+            case 2: //Shield
+                _shield = true;
+                _shieldHealth = 3;
+                _shieldColor.a = 255;
+                _shieldSprite.color = _shieldColor;
+                break;
+        }
     }
 
     IEnumerator TripleShotDisable()
@@ -149,24 +209,10 @@ public class Player : MonoBehaviour
         _tripleShot = false;
     }
 
-    public void SpeedUpEnable()
-    {
-        _speedIncreaseTotal += 10;
-        StartCoroutine(SpeedUpDisable());
-    }
-
     IEnumerator SpeedUpDisable()
     {
         yield return new WaitForSeconds(3);
         _speedIncreaseTotal -= 10;
-    }
-
-    public void ShieldEnable()
-    {
-        _shield = true;
-        _shieldHealth = 3;
-        _shieldColor.a = 255;
-        _shieldSprite.color = _shieldColor;
     }
     #endregion
 

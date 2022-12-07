@@ -21,24 +21,7 @@ public class Powerup : MonoBehaviour
         {
             Player player = other.GetComponent<Player>();
 
-            switch (_powerupID)
-            {
-                default:
-                    Debug.Log("Invalid powerupID");
-                    break;
-
-                case 0:
-                    player.TripleShotEnable();
-                    break;
-
-                case 1:
-                    player.SpeedUpEnable();
-                    break;
-
-                case 2:
-                    player.ShieldEnable();
-                    break;
-            }
+            player.EnablePowerup(_powerupID);
 
             AudioSource.PlayClipAtPoint(_clip, transform.position);
             Destroy(gameObject);

@@ -200,6 +200,19 @@ public class Player : MonoBehaviour
                 _shieldColor.a = 255;
                 _shieldSprite.color = _shieldColor;
                 break;
+
+            case 3: //Ammo
+                _currentAmmo = _maxAmmo;
+                UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
+                break;
+
+            case 4: //Health
+                if (_lives < 3)
+                    _lives++;
+                UIManager.Instance.UpdateLives(_lives);
+                if (_lives == 3) _rightEngineFire.SetActive(false);
+                if (_lives == 2) _leftEngineFire.SetActive(false);
+                break;
         }
     }
 

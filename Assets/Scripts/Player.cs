@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    #region Serialized Variables
     [SerializeField] float _speed = 10;
     [SerializeField] float _speedIncreaseTotal;
     [SerializeField] float _dashAmount = 5;
@@ -15,25 +16,29 @@ public class Player : MonoBehaviour
     [SerializeField] int _lives = 3;
     [SerializeField] int _score = 0;
     [SerializeField] int _maxAmmo = 15;
-    [SerializeField] GameObject _projectilePrefab;
-    [SerializeField] GameObject _tripleShotPrefab; 
+    [SerializeField] GameObject _laserPrefab;
+    [SerializeField] GameObject _tripleShotPrefab;
+    [SerializeField] GameObject _missilePrefab;
     [SerializeField] GameObject _shieldObject;
     [SerializeField] GameObject _rightEngineFire, _leftEngineFire;
-    [SerializeField] AudioClip _laserSound, _explosionSound;
+    [SerializeField] AudioClip _laserSound, _missileSound, _explosionSound;
     [SerializeField] AudioClip _shieldHit, _shieldDestroyed;
     [SerializeField] AudioClip _reloadSound;
-
-    bool _tripleShot;
+    #endregion
+    #region Local Variables
     bool _canDash = true;
     bool _shield;
     bool _reloading;
     int _shieldHealth;
     int _currentAmmo;
+    int _fireMode; //0 laser, 1 triple shot, 2 missile
+    int _currentMissiles = 5;
     float _nextFire;
     AudioSource _audioSource;
     ParticleSystem _particleSystem, _shieldParticleSystem;
     SpriteRenderer _shieldSprite;
     Color32 _shieldColor;
+    #endregion
 
     void Start()
     {
@@ -47,6 +52,7 @@ public class Player : MonoBehaviour
         _shieldColor = _shieldSprite.color;
         _currentAmmo = _maxAmmo;
         UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
+        UIManager.Instance.UpdateMissiles(_currentMissiles);
 
         if (_audioSource == null)
             Debug.LogError("AudioSource = NULL.");
@@ -56,6 +62,11 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        //change fire mode to 0 if 2 or to 2 if 0
+        //does nothing if triple shot is active
+        if (Input.GetKeyDown(KeyCode.R) && _fireMode != 1 && _currentMissiles > 0)
+            _fireMode = _fireMode == 0 ? 2 : 0;
+
         if (Input.GetKeyDown(KeyCode.LeftShift) && _canDash)
             StartCoroutine(DashCoroutine());
 
@@ -72,22 +83,32 @@ public class Player : MonoBehaviour
         
         _nextFire = Time.time + _fireRate;
 
-        //Instantiates triple shot prefab if powerup is active, otherwise fires single laser prefab
-        //Powerup shots ignore ammo count
-        if (_tripleShot) 
-            Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
-        else
+        //Instantiates projectile prefab based on current Fire Mode
+        switch (_fireMode)
         {
-            _currentAmmo--;
-            UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
+            case 0://laser
+                _currentAmmo--;
+                UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
+                if (_currentAmmo <= 0)
+                    StartCoroutine(ReloadCoroutine());
+                Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.07f, 0f), Quaternion.identity);
+                _audioSource.PlayOneShot(_laserSound);
+                break;
 
-            if (_currentAmmo <= 0)
-                StartCoroutine(ReloadCoroutine());
+            case 1://triple shot
+                Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
+                _audioSource.PlayOneShot(_laserSound);
+                break;
 
-            Instantiate(_projectilePrefab, transform.position + new Vector3(0, 1.07f, 0f), Quaternion.identity);
+            case 2://missile
+                _currentMissiles--;
+                if (_currentMissiles <= 0)
+                    _fireMode = 0;
+                UIManager.Instance.UpdateMissiles(_currentMissiles);
+                Instantiate(_missilePrefab, transform.position, Quaternion.identity);
+                _audioSource.PlayOneShot(_missileSound);
+                break;
         }
-
-        _audioSource.PlayOneShot(_laserSound);
     }
 
     void HandleMovement()
@@ -185,7 +206,7 @@ public class Player : MonoBehaviour
         switch (PowerupID)
         {
             case 0: //Triple Shot
-                _tripleShot = true;
+                _fireMode = 1;
                 StartCoroutine(TripleShotDisable());
                 break;
 
@@ -219,7 +240,7 @@ public class Player : MonoBehaviour
     IEnumerator TripleShotDisable()
     {
         yield return new WaitForSeconds(5);
-        _tripleShot = false;
+        _fireMode = 0;
     }
 
     IEnumerator SpeedUpDisable()

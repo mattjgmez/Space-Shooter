@@ -76,6 +76,7 @@ public class Enemy : MonoBehaviour
         _collider.enabled = false;
         _anim.SetTrigger("OnDeath");
         _audioSource.PlayOneShot(_explosionSound);
+        SpawnManager.Instance.ActiveEnemies.Remove(gameObject);
         Destroy(gameObject, 2.62f);
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnManager : MonoSingleton<SpawnManager>
@@ -8,6 +9,8 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     [SerializeField] GameObject[] _PowerupPrefabs;
 
     bool _stopSpawning = false;
+
+    public List<GameObject> ActiveEnemies;
 
     public void StartSpawning()
     {
@@ -25,6 +28,9 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             Vector3 spawnPos = new (Random.Range(-bounds_X, bounds_X), 10, 0);
             GameObject newEnemy = Instantiate(_enemyPrefab, spawnPos, Quaternion.identity, _enemyContainer.transform);
             newEnemy.transform.parent = _enemyContainer.transform;
+
+            //Adds spawned enemy to list of active enemies.
+            ActiveEnemies.Add(newEnemy);
 
             yield return new WaitForSeconds(3);
         }

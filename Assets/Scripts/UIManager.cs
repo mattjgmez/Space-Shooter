@@ -5,7 +5,7 @@ using TMPro;
 
 public class UIManager : MonoSingleton<UIManager>
 {
-    [SerializeField] TMP_Text _scoreText, _ammoText;
+    [SerializeField] TMP_Text _scoreText, _ammoText, _missileText;
     [SerializeField] Sprite[] _liveSprites;
     [SerializeField] Image _liveImage;
     [SerializeField] GameObject _pauseUI, _gameOverUI;
@@ -25,6 +25,11 @@ public class UIManager : MonoSingleton<UIManager>
     public void UpdateAmmo(string currentAmmo)
     {
         _ammoText.text = $"Ammo: {currentAmmo}";
+    }
+
+    public void UpdateMissiles(int currentMissiles)
+    {
+        _missileText.text = $"x {currentMissiles}";
     }
 
     public void UpdateLives(int currentLives)

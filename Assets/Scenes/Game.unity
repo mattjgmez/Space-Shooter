@@ -7346,12 +7346,14 @@ MonoBehaviour:
   _lives: 3
   _score: 0
   _maxAmmo: 15
-  _projectilePrefab: {fileID: 5303559984739006411, guid: a4d86ef6aee32bd499512a6b0ade0ef6, type: 3}
+  _laserPrefab: {fileID: 5303559984739006411, guid: a4d86ef6aee32bd499512a6b0ade0ef6, type: 3}
   _tripleShotPrefab: {fileID: 6690373346969842481, guid: a99cbd8adbb5d39489a9de876cea9d91, type: 3}
+  _missilePrefab: {fileID: 533985922471268772, guid: 77a6b8e4a73030e40ab77b6a67fe0e21, type: 3}
   _shieldObject: {fileID: 1219377686}
   _rightEngineFire: {fileID: 854764025}
   _leftEngineFire: {fileID: 1750794276}
   _laserSound: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _missileSound: {fileID: 8300000, guid: 706ffbe6c21a56640aac3956d4c0ebe5, type: 3}
   _explosionSound: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   _shieldHit: {fileID: 8300000, guid: a62f0e4a46d1edb4390a2a0d0ed021af, type: 3}
   _shieldDestroyed: {fileID: 8300000, guid: 4d631691c6d7b3e408937dc727a9b927, type: 3}
@@ -7416,7 +7418,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1485029883}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -7.39, y: -2.53, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:

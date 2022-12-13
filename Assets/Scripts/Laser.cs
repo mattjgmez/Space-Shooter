@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class Laser : MonoBehaviour
 {
     [SerializeField] float _speed;
     [SerializeField] float _maxY;

@@ -7,7 +7,7 @@ public class UIManager : MonoSingleton<UIManager>
 {
     [SerializeField] TMP_Text _scoreText, _ammoText, _missileText;
     [SerializeField] Sprite[] _liveSprites;
-    [SerializeField] Image _liveImage;
+    [SerializeField] Image _liveImage, _boostUI;
     [SerializeField] GameObject _pauseUI, _gameOverUI;
 
     bool _gameOver;
@@ -60,5 +60,18 @@ public class UIManager : MonoSingleton<UIManager>
             _gameOverUI.SetActive(!_gameOverUI.activeSelf);
             yield return new WaitForSeconds(0.5f);
         }
+    }
+
+    public IEnumerator BoostUICoroutine(float cooldown)
+    {
+        _boostUI.fillAmount = 1;
+
+        while (_boostUI.fillAmount > 0)
+        {
+            _boostUI.fillAmount -= 1.0f / cooldown * Time.deltaTime;
+            yield return null;
+        }
+
+        _boostUI.fillAmount = 0;
     }
 }

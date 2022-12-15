@@ -6,7 +6,8 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 {
     [SerializeField] float bounds_X;
     [SerializeField] GameObject _enemyPrefab, _enemyContainer;
-    [SerializeField] GameObject[] _PowerupPrefabs;
+    [SerializeField] GameObject[] _powerupPrefabs;
+    [SerializeField] GameObject[] _rarePowerupPrefabs;
 
     bool _stopSpawning = false;
 
@@ -43,10 +44,16 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         //Spawns a powerup every 6 to 8 seconds.
         while (!_stopSpawning)
         {
+            int nextPowerup = Random.Range(0, 100);
+            Debug.Log(nextPowerup);
             Vector3 spawnPos = new (Random.Range(-bounds_X, bounds_X), 10, 0);
-            Instantiate(_PowerupPrefabs[Random.Range(0, _PowerupPrefabs.Length)], spawnPos, Quaternion.identity);
 
-            yield return new WaitForSeconds(Random.Range(6, 9));
+            if (nextPowerup < 90) 
+                Instantiate(_powerupPrefabs[Random.Range(0, _powerupPrefabs.Length)], spawnPos, Quaternion.identity);
+            if (nextPowerup >= 90)
+                Instantiate(_rarePowerupPrefabs[Random.Range(0, _rarePowerupPrefabs.Length)], spawnPos, Quaternion.identity);
+
+            yield return new WaitForSeconds(Random.Range(6f, 9f));
         }
     }
 

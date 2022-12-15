@@ -7,9 +7,9 @@ public class Player : MonoBehaviour
     #region Serialized Variables
     [SerializeField] float _speed = 10;
     [SerializeField] float _speedIncreaseTotal;
-    [SerializeField] float _dashAmount = 5;
-    [SerializeField] float _dashDuration = 2;
-    [SerializeField] float _dashCooldown = 5;
+    [SerializeField] float _boostAmount = 5;
+    [SerializeField] float _boostDuration = 2;
+    [SerializeField] float _boostCooldown = 4;
     [SerializeField] float _bounds_X = 15.5f, _bounds_Y = 7.5f;
     [SerializeField] float _fireRate = 0.25f;
     [SerializeField] float _reloadTime = 3f;
@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     [SerializeField] AudioClip _reloadSound;
     #endregion
     #region Local Variables
-    bool _canDash = true;
+    bool _canBoost = true;
     bool _shield;
     bool _reloading;
     int _shieldHealth;
@@ -67,8 +67,8 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R) && _fireMode != 1 && _currentMissiles > 0)
             _fireMode = _fireMode == 0 ? 2 : 0;
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && _canDash)
-            StartCoroutine(DashCoroutine());
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _canBoost)
+            StartCoroutine(BoostCoroutine());
 
         HandleMovement();
 
@@ -78,15 +78,14 @@ public class Player : MonoBehaviour
 
     void HandleShooting()
     {
-        if (_currentAmmo <= 0)
-            return;        
-        
         _nextFire = Time.time + _fireRate;
 
         //Instantiates projectile prefab based on current Fire Mode
         switch (_fireMode)
         {
             case 0://laser
+                if (_currentAmmo <= 0)
+                    return;
                 _currentAmmo--;
                 UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
                 if (_currentAmmo <= 0)
@@ -126,18 +125,19 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -_bounds_Y, _bounds_Y), 0);
     }
 
-    IEnumerator DashCoroutine()
+    IEnumerator BoostCoroutine()
     {
-        _canDash = false;
-        _speedIncreaseTotal += _dashAmount;
+        _canBoost = false;
+        _speedIncreaseTotal += _boostAmount;
         _particleSystem.Play(false);
+        StartCoroutine(UIManager.Instance.BoostUICoroutine(_boostCooldown));
 
-        yield return new WaitForSeconds(_dashDuration);
-        _speedIncreaseTotal -= _dashAmount;
+        yield return new WaitForSeconds(_boostDuration);
+        _speedIncreaseTotal -= _boostAmount;
         _particleSystem.Stop();
 
-        yield return new WaitForSeconds(_dashCooldown -= _dashDuration);
-        _canDash = true;
+        yield return new WaitForSeconds(_boostCooldown - _boostDuration);
+        _canBoost = true;
     }
 
     IEnumerator ReloadCoroutine()
@@ -199,7 +199,6 @@ public class Player : MonoBehaviour
             _leftEngineFire.SetActive(true);
     }
 
-
     #region Powerup Methods
     public void EnablePowerup(int PowerupID)
     {
@@ -233,6 +232,11 @@ public class Player : MonoBehaviour
                 UIManager.Instance.UpdateLives(_lives);
                 if (_lives == 3) _rightEngineFire.SetActive(false);
                 if (_lives == 2) _leftEngineFire.SetActive(false);
+                break;
+
+            case 5: //Missile
+                _currentMissiles = 5;
+                UIManager.Instance.UpdateMissiles(_currentMissiles);
                 break;
         }
     }

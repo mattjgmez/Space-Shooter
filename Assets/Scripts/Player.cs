@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 {
     #region Serialized Variables
     [SerializeField] float _speed = 10;
-    [SerializeField] float _speedIncreaseTotal;
+    [SerializeField] float _totalSpeedBonus = 0f;
     [SerializeField] float _boostAmount = 5;
     [SerializeField] float _boostDuration = 2;
     [SerializeField] float _boostCooldown = 4;
@@ -118,7 +118,7 @@ public class Player : MonoBehaviour
     {
         Vector2 direction = new (Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        float currentSpeed = _speed + _speedIncreaseTotal;
+        float currentSpeed = _speed + _totalSpeedBonus;
         transform.Translate(currentSpeed * Time.deltaTime * direction);
 
         //Makes player object wrap when leaving the left and right boundaries
@@ -132,12 +132,12 @@ public class Player : MonoBehaviour
     IEnumerator BoostCoroutine()
     {
         _canBoost = false;
-        _speedIncreaseTotal += _boostAmount;
+        _totalSpeedBonus += _boostAmount;
         _particleSystem.Play(false);
         StartCoroutine(UIManager.Instance.BoostUICoroutine(_boostCooldown));
 
         yield return new WaitForSeconds(_boostDuration);
-        _speedIncreaseTotal -= _boostAmount;
+        _totalSpeedBonus -= _boostAmount;
         _particleSystem.Stop();
 
         yield return new WaitForSeconds(_boostCooldown - _boostDuration);
@@ -220,7 +220,7 @@ public class Player : MonoBehaviour
                 break;
 
             case 1: //Speedup
-                _speedIncreaseTotal += 10;
+                _totalSpeedBonus += 10;
                 StartCoroutine(SpeedUpDisable());
                 break;
 
@@ -260,7 +260,7 @@ public class Player : MonoBehaviour
     IEnumerator SpeedUpDisable()
     {
         yield return new WaitForSeconds(3);
-        _speedIncreaseTotal -= 10;
+        _totalSpeedBonus -= 10;
     }
     #endregion
 

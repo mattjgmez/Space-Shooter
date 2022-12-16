@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 20
-  _maxY: 9
+  _bounds_Y: 10
   _isEnemy: 1
 --- !u!1 &6232736283798503649
 GameObject:
@@ -296,7 +296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 20
-  _maxY: 9
+  _bounds_Y: 10
   _isEnemy: 1
 --- !u!1 &6628742992468292316
 GameObject:

@@ -147,4 +147,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 20
-  _maxY: 9
+  _bounds_Y: 10
+  _isEnemy: 0

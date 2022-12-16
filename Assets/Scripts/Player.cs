@@ -74,6 +74,10 @@ public class Player : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && Time.time > _nextFire && !_reloading)
             HandleShooting();
+
+        //Used for debugging methods
+        if (Input.GetKeyDown(KeyCode.Tab))
+            TakeDamage();
     }
 
     void HandleShooting()
@@ -194,9 +198,15 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
         else if (_lives == 2)
+        {
+            StartCoroutine(CameraManager.Instance.CameraShake());
             _rightEngineFire.SetActive(true);
+        }
         else if (_lives == 1)
+        {
+            StartCoroutine(CameraManager.Instance.CameraShake());
             _leftEngineFire.SetActive(true);
+        }
     }
 
     #region Powerup Methods

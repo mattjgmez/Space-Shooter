@@ -23,7 +23,7 @@ public class Laser : MonoBehaviour
 
     void HandleMovement()
     {
-        transform.Translate(_speed * Time.deltaTime * (_isEnemy ? Vector2.down : Vector2.up));
+        transform.Translate((_isEnemy ? -transform.up : transform.up) * _speed * Time.deltaTime, Space.World);
 
         if (transform.position.y < -_bounds_Y || transform.position.y > _bounds_Y)
         {

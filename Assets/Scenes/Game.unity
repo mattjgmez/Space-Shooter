@@ -879,6 +879,7 @@ MonoBehaviour:
   - {fileID: 567549708935829126, guid: 6fa9c54b39b3a8746b295a16dba858e7, type: 3}
   - {fileID: 2946478115778292679, guid: 44e5ed39b2746cf478dd3d4ca5fec48f, type: 3}
   - {fileID: 4797893924104868189, guid: 164716a879f346941a5b48110259bf23, type: 3}
+  - {fileID: 7676970943839480874, guid: 41217354ef7c81c4cae76c6867a36721, type: 3}
   _rarePowerupPrefabs:
   - {fileID: 660210350774247413, guid: bcf915f72ae49a94c944e3cdff683034, type: 3}
   ActiveEnemies: []

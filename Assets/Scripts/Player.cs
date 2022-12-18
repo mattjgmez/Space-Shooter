@@ -209,10 +209,10 @@ public class Player : MonoBehaviour
         }
     }
 
-    #region Powerup Methods
-    public void EnablePowerup(int PowerupID)
+    #region Collectable Methods
+    public void TriggerCollectable(int ID)
     {
-        switch (PowerupID)
+        switch (ID)
         {
             case 0: //Triple Shot
                 _fireMode = 1;

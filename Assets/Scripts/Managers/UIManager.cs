@@ -5,12 +5,13 @@ using TMPro;
 
 public class UIManager : MonoSingleton<UIManager>
 {
-    [SerializeField] TMP_Text _scoreText, _ammoText, _missileText;
+    [SerializeField] TMP_Text _scoreText, _ammoText, _missileText, _waveText;
     [SerializeField] Sprite[] _liveSprites;
     [SerializeField] Image _liveImage, _boostUI;
     [SerializeField] GameObject _pauseUI, _gameOverUI;
 
     bool _gameOver;
+    Color _textColor;
 
     void Start()
     {
@@ -73,5 +74,29 @@ public class UIManager : MonoSingleton<UIManager>
         }
 
         _boostUI.fillAmount = 0;
+    }
+
+    public void UpdateWaveText(int currentWave)
+    {
+        _waveText.text = $"WAVE {currentWave}";
+        StartCoroutine(WaveText());
+    }
+
+    public IEnumerator WaveText()
+    {
+
+        _textColor = Color.white;
+        _waveText.color = _textColor;
+        yield return new WaitForSeconds(1);
+
+        while (_waveText.color.a > 0)
+        {
+            _textColor.a -= 1 * Time.deltaTime;
+            _waveText.color = _textColor;
+            yield return null;
+        }
+
+        _textColor.a -= 0;
+        _waveText.color = _textColor;
     }
 }

@@ -22,8 +22,6 @@ public class Enemy : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _audioSource = GetComponent<AudioSource>();
 
-        Debug.Log("Enemy script start");
-
         _laserCooldown = Time.time + 1f;
     }
 

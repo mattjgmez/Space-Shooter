@@ -11,6 +11,9 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     [SerializeField] GameObject[] _rarePowerupPrefabs;
 
     bool _stopSpawning = false;
+    int _currentWave = 0;
+    int _spawnedEnemies = 0;
+    float _spawnDelay = 5f;
     Vector3 _spawnPosition;
     Quaternion _spawnRotation;
 
@@ -18,23 +21,40 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
     public void StartSpawning()
     {
-        StartCoroutine(SpawnEnemy());
+        StartWave();
+
         StartCoroutine(SpawnPowerup());
     }
 
-    IEnumerator SpawnEnemy()
+    void StartWave()
+    {
+        _currentWave++;
+        _spawnedEnemies = 0;
+        UIManager.Instance.UpdateWaveText(_currentWave);
+
+        //Set wave enemy limit and spawn delay exponentially
+        int enemyAmount = (int)((_currentWave + 3) * Mathf.Pow(1 + 0.25f, 2));
+        _spawnDelay = Mathf.Clamp(_spawnDelay * Mathf.Pow(1 - .1f, 2), 0.5f, 3f);
+
+        StartCoroutine(SpawnEnemy(enemyAmount));
+    }
+
+    IEnumerator SpawnEnemy(int enemyAmount)
     {
         yield return new WaitForSeconds(3);
 
         //Spawns an enemy every 5 seconds.
-        while (!_stopSpawning)
+        while (!_stopSpawning && _spawnedEnemies < enemyAmount)
         {
+            _spawnedEnemies++;
             int enemyType = Random.Range(0, _enemyPrefab.Length);
+
+            //Spawns an enemy based on rolled enemy type
             switch (enemyType)
             {
                 case 0: //Spawns enemy in appropriate spawn area
                     _spawnPosition = new(Random.Range(-bounds_X, bounds_X), 10, 0);
-                    GameObject newEnemy = 
+                    GameObject newEnemy =
                         Instantiate(_enemyPrefab[enemyType], _spawnPosition, Quaternion.identity, _enemyContainer.transform);
                     newEnemy.transform.parent = _enemyContainer.transform;
 
@@ -47,22 +67,24 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                     {
                         _spawnPosition = new(17, 2.5f, 0);
                         _spawnRotation = Quaternion.Euler(0, 0, -14.3f);
-                    } 
+                    }
                     else
                     {
                         _spawnPosition = new(-17, 2.5f, 0);
                         _spawnRotation = Quaternion.Euler(0, 0, 14.3f);
                     }
-                    newEnemy = 
+                    newEnemy =
                         Instantiate(_enemyPrefab[enemyType], _spawnPosition, _spawnRotation, _enemyContainer.transform);
                     newEnemy.transform.parent = _enemyContainer.transform;
 
                     ActiveEnemies.Add(newEnemy);
                     break;
-            }
+            } 
 
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(_spawnDelay);
         }
+
+        StartWave();
     }
 
     IEnumerator SpawnPowerup()
@@ -73,7 +95,6 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         while (!_stopSpawning)
         {
             int nextPowerup = Random.Range(0, 100);
-            Debug.Log(nextPowerup);
             Vector3 spawnPos = new (Random.Range(-bounds_X, bounds_X), 10, 0);
 
             if (nextPowerup < 90) 

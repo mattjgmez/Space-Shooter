@@ -36,55 +36,66 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         int enemyAmount = (int)((_currentWave + 3) * Mathf.Pow(1 + 0.25f, 2));
         _spawnDelay = Mathf.Clamp(_spawnDelay * Mathf.Pow(1 - .1f, 2), 0.5f, 3f);
 
-        StartCoroutine(SpawnEnemy(enemyAmount));
+        StartCoroutine(SpawnEnemyCoroutine(enemyAmount));
     }
 
-    IEnumerator SpawnEnemy(int enemyAmount)
+    IEnumerator SpawnEnemyCoroutine(int enemyAmount)
     {
         yield return new WaitForSeconds(3);
 
-        //Spawns an enemy every 5 seconds.
         while (!_stopSpawning && _spawnedEnemies < enemyAmount)
         {
             _spawnedEnemies++;
             int enemyType = Random.Range(0, _enemyPrefab.Length);
 
-            //Spawns an enemy based on rolled enemy type
-            switch (enemyType)
-            {
-                case 0: //Spawns enemy in appropriate spawn area
-                    _spawnPosition = new(Random.Range(-bounds_X, bounds_X), 10, 0);
-                    GameObject newEnemy =
-                        Instantiate(_enemyPrefab[enemyType], _spawnPosition, Quaternion.identity, _enemyContainer.transform);
-                    newEnemy.transform.parent = _enemyContainer.transform;
-
-                    //Adds spawned enemy to list of active enemies.
-                    ActiveEnemies.Add(newEnemy);
-                    break;
-
-                case 1: //Spawns side scrolling enemy on random screen side
-                    if (Random.Range(0, 2) == 0)
-                    {
-                        _spawnPosition = new(17, 2.5f, 0);
-                        _spawnRotation = Quaternion.Euler(0, 0, -14.3f);
-                    }
-                    else
-                    {
-                        _spawnPosition = new(-17, 2.5f, 0);
-                        _spawnRotation = Quaternion.Euler(0, 0, 14.3f);
-                    }
-                    newEnemy =
-                        Instantiate(_enemyPrefab[enemyType], _spawnPosition, _spawnRotation, _enemyContainer.transform);
-                    newEnemy.transform.parent = _enemyContainer.transform;
-
-                    ActiveEnemies.Add(newEnemy);
-                    break;
-            } 
+            SpawnEnemy(enemyType);
 
             yield return new WaitForSeconds(_spawnDelay);
         }
 
+        while (ActiveEnemies.Count > 0) //Prevents next wave from spawning until all active enemies are slain
+            yield return null;
+
         StartWave();
+    }
+
+    void SpawnEnemy(int enemyType)
+    {
+        //Spawns an enemy based on rolled enemy type
+        switch (enemyType)
+        {
+            case 0: //Basic enemy
+                _spawnPosition = new(Random.Range(-bounds_X, bounds_X), 10, 0);
+                GameObject newEnemy =
+                    Instantiate(_enemyPrefab[enemyType], _spawnPosition, Quaternion.identity, _enemyContainer.transform);
+                newEnemy.transform.parent = _enemyContainer.transform;
+
+                //Adds spawned enemy to list of active enemies.
+                ActiveEnemies.Add(newEnemy);
+                break;
+
+            case 1: //Half circle enemy
+                if (Random.Range(0, 2) == 0)
+                {
+                    _spawnPosition = new(17, 2.5f, 0);
+                    _spawnRotation = Quaternion.Euler(0, 0, -14.3f);
+                }
+                else
+                {
+                    _spawnPosition = new(-17, 2.5f, 0);
+                    _spawnRotation = Quaternion.Euler(0, 0, 14.3f);
+                }
+                newEnemy =
+                    Instantiate(_enemyPrefab[enemyType], _spawnPosition, _spawnRotation, _enemyContainer.transform);
+                newEnemy.transform.parent = _enemyContainer.transform;
+
+                ActiveEnemies.Add(newEnemy);
+                break;
+
+            case 2: //Beam enemy
+
+                break;
+        }
     }
 
     IEnumerator SpawnPowerup()

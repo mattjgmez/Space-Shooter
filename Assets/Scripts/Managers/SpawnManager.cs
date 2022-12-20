@@ -53,7 +53,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             yield return new WaitForSeconds(_spawnDelay);
         }
 
-        while (ActiveEnemies.Count > 0) //Prevents next wave from spawning until all active enemies are slain
+        while (!_stopSpawning && ActiveEnemies.Count > 0) //Prevents next wave from spawning until all active enemies are slain
             yield return null;
 
         StartWave();
@@ -75,7 +75,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                 break;
 
             case 1: //Half circle enemy
-                if (Random.Range(0, 2) == 0)
+                if (Random.Range(0, 2) == 0)//Spawns enemy on random side of screen
                 {
                     _spawnPosition = new(17, 2.5f, 0);
                     _spawnRotation = Quaternion.Euler(0, 0, -14.3f);
@@ -93,7 +93,13 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                 break;
 
             case 2: //Beam enemy
+                _spawnPosition = new(Random.Range(-bounds_X, bounds_X), 10, 0);
+                newEnemy =
+                    Instantiate(_enemyPrefab[enemyType], _spawnPosition, Quaternion.identity, _enemyContainer.transform);
+                newEnemy.transform.parent = _enemyContainer.transform;
 
+                //Adds spawned enemy to list of active enemies.
+                ActiveEnemies.Add(newEnemy);
                 break;
         }
     }

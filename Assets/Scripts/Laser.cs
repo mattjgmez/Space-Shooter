@@ -5,6 +5,7 @@ public class Laser : MonoBehaviour
     [SerializeField] float _speed;
     [SerializeField] float _bounds_Y;
     [SerializeField] bool _isEnemy;
+    [SerializeField] bool _isBeam;
 
     Player _player;
 
@@ -39,7 +40,8 @@ public class Laser : MonoBehaviour
         if (other.tag == "Player" && _isEnemy)
         {
             _player.TakeDamage();
-            Destroy(gameObject);
+            if (!_isBeam)
+                Destroy(gameObject);
         }
     }
 }

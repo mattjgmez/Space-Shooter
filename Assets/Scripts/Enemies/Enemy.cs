@@ -6,10 +6,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float _speed;
     [SerializeField] protected float _bounds_X = 14, _bounds_Y = 10;
     [SerializeField] protected AudioClip _laserSound;
-    [SerializeField] protected GameObject _enemyLaserPrefab, _explosionPrefab;
+    [SerializeField] protected GameObject _enemyProjectile, _explosionPrefab;
 
-    protected bool _isDead;
-    protected float _laserCooldown;
+    protected bool _isDead = false;
+    protected float _weaponCooldown;
     protected Player _player;
     protected BoxCollider2D _collider;
     protected AudioSource _audioSource;
@@ -22,7 +22,7 @@ public class Enemy : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _audioSource = GetComponent<AudioSource>();
 
-        _laserCooldown = Time.time + 1f;
+        _weaponCooldown = Time.time + 1f;
     }
 
     void Update()
@@ -30,10 +30,12 @@ public class Enemy : MonoBehaviour
         if (_isDead)
             return;
 
-        if (Time.time > _laserCooldown && _player)
-            FireLaser();
+        if (Time.time > _weaponCooldown && _player)
+            FireWeapon();
 
         HandleMovement();
+
+        InheritedUpdate();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -63,14 +65,14 @@ public class Enemy : MonoBehaviour
             transform.position = new Vector2(Random.Range(-_bounds_X, _bounds_X), _bounds_Y);
     }
 
-    void FireLaser()
+    protected virtual void FireWeapon()
     {
-        _laserCooldown = Time.time + Random.Range(3f, 7f);
-        Instantiate(_enemyLaserPrefab, transform.position, transform.rotation);
+        _weaponCooldown = Time.time + Random.Range(3f, 7f);
+        Instantiate(_enemyProjectile, transform.position, transform.rotation);
         _audioSource.PlayOneShot(_laserSound);
     }
 
-    void TriggerDeath()
+    protected virtual void TriggerDeath()
     {
         _isDead = true;
         _collider.enabled = false;
@@ -79,4 +81,6 @@ public class Enemy : MonoBehaviour
         SpawnManager.Instance.ActiveEnemies.Remove(gameObject);
         Destroy(gameObject, 1f);
     }
+
+    protected virtual void InheritedUpdate() { }
 }

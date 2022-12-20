@@ -480,7 +480,7 @@ MonoBehaviour:
   _bounds_X: 14
   _bounds_Y: 10
   _laserSound: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
-  _enemyLaserPrefab: {fileID: 6628742992468292316, guid: 2eff5a50d27378942aed63510975365a, type: 3}
+  _enemyProjectile: {fileID: 6628742992468292316, guid: 2eff5a50d27378942aed63510975365a, type: 3}
   _explosionPrefab: {fileID: 6454016076013425788, guid: 2c585908bd0f3914dbaeb1701918f502, type: 3}
   _moveRight: 0
   _rotationSpeed: 5

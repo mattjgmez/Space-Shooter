@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject _laserPrefab;
     [SerializeField] GameObject _tripleShotPrefab;
     [SerializeField] GameObject _missilePrefab;
+    [SerializeField] GameObject _explosionPrefab;
     [SerializeField] GameObject _shieldObject;
     [SerializeField] GameObject _rightEngineFire, _leftEngineFire;
     [SerializeField] AudioClip _laserSound, _missileSound, _explosionSound;
@@ -62,6 +63,9 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (_lives <= 0)
+            return;
+
         //change fire mode to 0 if 2 or to 2 if 0
         //does nothing if triple shot is active
         if (Input.GetKeyDown(KeyCode.R) && _fireMode != 1 && _currentMissiles > 0)
@@ -191,11 +195,7 @@ public class Player : MonoBehaviour
 
         if (_lives < 1)
         {
-            SpawnManager.Instance.OnPlayerDeath();
-            GameManager.Instance.GameOver();
-            UIManager.Instance.ShowGameOverText();
-            _audioSource.PlayOneShot(_explosionSound);
-            Destroy(gameObject);
+            TriggerDeath();
         }
         else if (_lives == 2)
         {
@@ -207,6 +207,15 @@ public class Player : MonoBehaviour
             StartCoroutine(CameraManager.Instance.CameraShake());
             _leftEngineFire.SetActive(true);
         }
+    }
+
+    private void TriggerDeath()
+    {
+        SpawnManager.Instance.OnPlayerDeath();
+        GameManager.Instance.GameOver();
+        UIManager.Instance.ShowGameOverText();
+        Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+        Destroy(gameObject, 1);
     }
 
     #region Collectable Methods

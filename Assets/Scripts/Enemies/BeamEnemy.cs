@@ -13,7 +13,7 @@ public class BeamEnemy : Enemy
 
     protected override void InheritedUpdate()
     {
-        if (!_firingWeapon && _player == null) HandleRotation();
+        if (!_firingWeapon && _player != null) HandleRotation();
         else _rigidbody.angularVelocity = 0;
     }
 

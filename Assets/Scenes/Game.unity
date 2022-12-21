@@ -732,7 +732,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &854764025
 GameObject:
@@ -869,11 +869,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bounds_X: 14
+  _enemyContainer: {fileID: 226930164}
   _enemyPrefab:
   - {fileID: 4696202680217212170, guid: d0809203f10471241bc9b3ac0972b552, type: 3}
   - {fileID: 8935155190258695280, guid: 0386b5610a9974b469a568a4913cdbe9, type: 3}
   - {fileID: 1373525497221026936, guid: 78bcea83eb5922a459bdd61e0e9fddc9, type: 3}
-  _enemyContainer: {fileID: 226930163}
   _powerupPrefabs:
   - {fileID: 8541494985734023923, guid: 4a645c81741341742b0c60c239353d9f, type: 3}
   - {fileID: 5503697896774214530, guid: d52c57c83998afa49a78f24a42e417b6, type: 3}
@@ -883,6 +883,7 @@ MonoBehaviour:
   - {fileID: 7676970943839480874, guid: 41217354ef7c81c4cae76c6867a36721, type: 3}
   _rarePowerupPrefabs:
   - {fileID: 660210350774247413, guid: bcf915f72ae49a94c944e3cdff683034, type: 3}
+  _explosionPrefab: {fileID: 6454016076013425788, guid: 2c585908bd0f3914dbaeb1701918f502, type: 3}
   ActiveEnemies: []
 --- !u!4 &885714374
 Transform:
@@ -7206,13 +7207,11 @@ MonoBehaviour:
   _laserPrefab: {fileID: 5303559984739006411, guid: a4d86ef6aee32bd499512a6b0ade0ef6, type: 3}
   _tripleShotPrefab: {fileID: 6690373346969842481, guid: a99cbd8adbb5d39489a9de876cea9d91, type: 3}
   _missilePrefab: {fileID: 533985922471268772, guid: 77a6b8e4a73030e40ab77b6a67fe0e21, type: 3}
-  _explosionPrefab: {fileID: 6454016076013425788, guid: 2c585908bd0f3914dbaeb1701918f502, type: 3}
   _shieldObject: {fileID: 1219377686}
   _rightEngineFire: {fileID: 854764025}
   _leftEngineFire: {fileID: 1750794276}
   _laserSound: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   _missileSound: {fileID: 8300000, guid: 706ffbe6c21a56640aac3956d4c0ebe5, type: 3}
-  _explosionSound: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   _shieldHit: {fileID: 8300000, guid: a62f0e4a46d1edb4390a2a0d0ed021af, type: 3}
   _shieldDestroyed: {fileID: 8300000, guid: 4d631691c6d7b3e408937dc727a9b927, type: 3}
   _reloadSound: {fileID: 8300000, guid: 5ddf7fc69409904439f03780a42e53d8, type: 3}
@@ -13463,7 +13462,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3098130020522811680, guid: 8ca05eb2778141144bbae694f64b8bd4, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3098130020522811680, guid: 8ca05eb2778141144bbae694f64b8bd4, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13471,7 +13470,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3098130020522811680, guid: 8ca05eb2778141144bbae694f64b8bd4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6
+      value: 11.34
       objectReference: {fileID: 0}
     - target: {fileID: 3098130020522811680, guid: 8ca05eb2778141144bbae694f64b8bd4, type: 3}
       propertyPath: m_LocalPosition.z

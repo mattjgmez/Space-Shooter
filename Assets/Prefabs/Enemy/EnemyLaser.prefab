@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3481823713946672958}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.275, y: -1.188, z: 0}
+  m_LocalPosition: {x: -0.275, y: -1.156, z: 0}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -103,7 +103,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 1}
     oldSize: {x: 1, y: 3}
     newSize: {x: 1, y: 3}
     adaptiveTilingThreshold: 0.5
@@ -149,6 +149,7 @@ MonoBehaviour:
   _speed: 20
   _bounds_Y: 10
   _isEnemy: 1
+  _isBeam: 0
 --- !u!1 &6232736283798503649
 GameObject:
   m_ObjectHideFlags: 0
@@ -252,7 +253,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 1}
     oldSize: {x: 1, y: 3}
     newSize: {x: 1, y: 3}
     adaptiveTilingThreshold: 0.5
@@ -298,6 +299,7 @@ MonoBehaviour:
   _speed: 20
   _bounds_Y: 10
   _isEnemy: 1
+  _isBeam: 0
 --- !u!1 &6628742992468292316
 GameObject:
   m_ObjectHideFlags: 0

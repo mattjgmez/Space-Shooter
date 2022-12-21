@@ -3,7 +3,6 @@ using UnityEngine;
 public class Asteroid : MonoBehaviour
 {
     [SerializeField] float _rotateSpeed = 0.3f;
-    [SerializeField] GameObject _explosionPrefab;
 
     void Update()
     {
@@ -16,10 +15,8 @@ public class Asteroid : MonoBehaviour
         {
             gameObject.SetActive(false);
 
-            GameObject explosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
-
+            SpawnManager.Instance.SpawnExplosion(transform.position);
             Destroy(other.gameObject);
-            Destroy(explosion, 2.63f);
 
             SpawnManager.Instance.StartSpawning();
 

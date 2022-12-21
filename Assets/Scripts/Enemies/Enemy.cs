@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float _speed;
     [SerializeField] protected float _bounds_X = 14, _bounds_Y = 10;
     [SerializeField] protected AudioClip _laserSound;
-    [SerializeField] protected GameObject _enemyProjectile, _explosionPrefab;
+    [SerializeField] protected GameObject _enemyProjectile;
 
     protected bool _isDead = false;
     protected float _weaponCooldown;
@@ -76,8 +76,7 @@ public class Enemy : MonoBehaviour
     {
         _isDead = true;
         _collider.enabled = false;
-        GameObject explosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
-        Destroy(explosion, 2.63f);
+        SpawnManager.Instance.SpawnExplosion(transform.position);
         SpawnManager.Instance.ActiveEnemies.Remove(gameObject);
         Destroy(gameObject, 1f);
     }

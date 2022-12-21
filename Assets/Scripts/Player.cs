@@ -19,10 +19,9 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject _laserPrefab;
     [SerializeField] GameObject _tripleShotPrefab;
     [SerializeField] GameObject _missilePrefab;
-    [SerializeField] GameObject _explosionPrefab;
     [SerializeField] GameObject _shieldObject;
     [SerializeField] GameObject _rightEngineFire, _leftEngineFire;
-    [SerializeField] AudioClip _laserSound, _missileSound, _explosionSound;
+    [SerializeField] AudioClip _laserSound, _missileSound;
     [SerializeField] AudioClip _shieldHit, _shieldDestroyed;
     [SerializeField] AudioClip _reloadSound;
     #endregion
@@ -38,6 +37,7 @@ public class Player : MonoBehaviour
     AudioSource _audioSource;
     ParticleSystem _particleSystem, _shieldParticleSystem;
     SpriteRenderer _shieldSprite;
+    BoxCollider2D _collider;
     Color32 _shieldColor;
     #endregion
 
@@ -47,6 +47,8 @@ public class Player : MonoBehaviour
 
         _audioSource = GetComponent<AudioSource>();
         _particleSystem = GetComponent<ParticleSystem>();
+        _collider = GetComponent<BoxCollider2D>();
+
         _shieldSprite = _shieldObject.GetComponent<SpriteRenderer>();
         _shieldParticleSystem = _shieldObject.GetComponent<ParticleSystem>();
 
@@ -211,10 +213,13 @@ public class Player : MonoBehaviour
 
     private void TriggerDeath()
     {
+        _collider.enabled = false;
+
         SpawnManager.Instance.OnPlayerDeath();
         GameManager.Instance.GameOver();
         UIManager.Instance.ShowGameOverText();
-        Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+        SpawnManager.Instance.SpawnExplosion(transform.position);
+
         Destroy(gameObject, 1);
     }
 

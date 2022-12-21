@@ -5,17 +5,17 @@ using UnityEngine;
 public class SpawnManager : MonoSingleton<SpawnManager>
 {
     [SerializeField] float bounds_X = 14;
+    [SerializeField] Transform _enemyContainer;
     [SerializeField] GameObject[] _enemyPrefab;
-    [SerializeField] GameObject _enemyContainer;
     [SerializeField] GameObject[] _powerupPrefabs;
     [SerializeField] GameObject[] _rarePowerupPrefabs;
+    [SerializeField] GameObject _explosionPrefab;
 
     bool _stopSpawning = false;
     int _currentWave = 0;
     int _spawnedEnemies = 0;
+    int _enemyToSpawnID;
     float _spawnDelay = 5f;
-    Vector3 _spawnPosition;
-    Quaternion _spawnRotation;
 
     public List<GameObject> ActiveEnemies;
 
@@ -28,6 +28,8 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
     void StartWave()
     {
+        if (_stopSpawning) return;
+
         _currentWave++;
         _spawnedEnemies = 0;
         UIManager.Instance.UpdateWaveText(_currentWave);
@@ -46,9 +48,8 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         while (!_stopSpawning && _spawnedEnemies < enemyAmount)
         {
             _spawnedEnemies++;
-            int enemyType = Random.Range(0, _enemyPrefab.Length);
 
-            SpawnEnemy(enemyType);
+            SpawnEnemy(RollEnemy());
 
             yield return new WaitForSeconds(_spawnDelay);
         }
@@ -59,49 +60,41 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         StartWave();
     }
 
-    void SpawnEnemy(int enemyType)
+    GameObject RollEnemy()
     {
-        //Spawns an enemy based on rolled enemy type
-        switch (enemyType)
+        int RNG = Random.Range(0, 100);
+        if (RNG <= 5 * _currentWave && _currentWave >= 3) //Beam enemy
         {
-            case 0: //Basic enemy
-                _spawnPosition = new(Random.Range(-bounds_X, bounds_X), 10, 0);
-                GameObject newEnemy =
-                    Instantiate(_enemyPrefab[enemyType], _spawnPosition, Quaternion.identity, _enemyContainer.transform);
-                newEnemy.transform.parent = _enemyContainer.transform;
-
-                //Adds spawned enemy to list of active enemies.
-                ActiveEnemies.Add(newEnemy);
-                break;
-
-            case 1: //Half circle enemy
-                if (Random.Range(0, 2) == 0)//Spawns enemy on random side of screen
-                {
-                    _spawnPosition = new(17, 2.5f, 0);
-                    _spawnRotation = Quaternion.Euler(0, 0, -14.3f);
-                }
-                else
-                {
-                    _spawnPosition = new(-17, 2.5f, 0);
-                    _spawnRotation = Quaternion.Euler(0, 0, 14.3f);
-                }
-                newEnemy =
-                    Instantiate(_enemyPrefab[enemyType], _spawnPosition, _spawnRotation, _enemyContainer.transform);
-                newEnemy.transform.parent = _enemyContainer.transform;
-
-                ActiveEnemies.Add(newEnemy);
-                break;
-
-            case 2: //Beam enemy
-                _spawnPosition = new(Random.Range(-bounds_X, bounds_X), 10, 0);
-                newEnemy =
-                    Instantiate(_enemyPrefab[enemyType], _spawnPosition, Quaternion.identity, _enemyContainer.transform);
-                newEnemy.transform.parent = _enemyContainer.transform;
-
-                //Adds spawned enemy to list of active enemies.
-                ActiveEnemies.Add(newEnemy);
-                break;
+            _enemyToSpawnID = 2;
+            return _enemyPrefab[2];
         }
+        else if (RNG <= 10 * _currentWave && _currentWave >= 2) //Curve enemy
+        {
+            _enemyToSpawnID = 1;
+            return _enemyPrefab[1];
+        }
+        else //Basic enemy
+        {
+            _enemyToSpawnID = 0;
+            return _enemyPrefab[0];
+        }
+    }
+
+    void SpawnEnemy(GameObject enemyType)
+    {
+        Vector3 spawnPosition = new(Random.Range(-bounds_X, bounds_X), 10, 0);
+        Vector3 spawnRotation = Vector3.zero;
+
+        if (_enemyToSpawnID == 1)
+        {
+            //Randomly select left or right and set position/rotation accordingly
+            bool isLeft = Random.Range(0, 2) == 0;
+            spawnPosition = new Vector3(isLeft ? -17 : 17, 2.5f, 0);
+            spawnRotation = new Vector3(0, 0, isLeft ? 14.3f : -14.3f);
+        }
+
+        GameObject newEnemy = Instantiate(enemyType, spawnPosition, Quaternion.Euler(spawnRotation), _enemyContainer);
+        ActiveEnemies.Add(newEnemy);
     }
 
     IEnumerator SpawnPowerup()
@@ -126,5 +119,11 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     public void OnPlayerDeath()
     {
         _stopSpawning = true;
+    }
+
+    public void SpawnExplosion(Vector3 position)
+    {
+        GameObject explosion = Instantiate(_explosionPrefab, position, Quaternion.identity);
+        Destroy(explosion, 2.63f);
     }
 }

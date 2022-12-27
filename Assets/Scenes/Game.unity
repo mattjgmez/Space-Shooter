@@ -874,15 +874,16 @@ MonoBehaviour:
   - {fileID: 4696202680217212170, guid: d0809203f10471241bc9b3ac0972b552, type: 3}
   - {fileID: 8935155190258695280, guid: 0386b5610a9974b469a568a4913cdbe9, type: 3}
   - {fileID: 1373525497221026936, guid: 78bcea83eb5922a459bdd61e0e9fddc9, type: 3}
+  - {fileID: 3757094003839672304, guid: 7687806abcf73b94ea14cef55f8cc0a1, type: 3}
   _powerupPrefabs:
   - {fileID: 8541494985734023923, guid: 4a645c81741341742b0c60c239353d9f, type: 3}
-  - {fileID: 5503697896774214530, guid: d52c57c83998afa49a78f24a42e417b6, type: 3}
   - {fileID: 567549708935829126, guid: 6fa9c54b39b3a8746b295a16dba858e7, type: 3}
   - {fileID: 2946478115778292679, guid: 44e5ed39b2746cf478dd3d4ca5fec48f, type: 3}
-  - {fileID: 4797893924104868189, guid: 164716a879f346941a5b48110259bf23, type: 3}
   - {fileID: 7676970943839480874, guid: 41217354ef7c81c4cae76c6867a36721, type: 3}
   _rarePowerupPrefabs:
   - {fileID: 660210350774247413, guid: bcf915f72ae49a94c944e3cdff683034, type: 3}
+  - {fileID: 4797893924104868189, guid: 164716a879f346941a5b48110259bf23, type: 3}
+  - {fileID: 5503697896774214530, guid: d52c57c83998afa49a78f24a42e417b6, type: 3}
   _explosionPrefab: {fileID: 6454016076013425788, guid: 2c585908bd0f3914dbaeb1701918f502, type: 3}
   ActiveEnemies: []
 --- !u!4 &885714374
@@ -12754,7 +12755,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ReferenceResolution: {x: 1960, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
@@ -13470,7 +13471,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3098130020522811680, guid: 8ca05eb2778141144bbae694f64b8bd4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.34
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3098130020522811680, guid: 8ca05eb2778141144bbae694f64b8bd4, type: 3}
       propertyPath: m_LocalPosition.z

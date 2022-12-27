@@ -63,12 +63,17 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     GameObject RollEnemy()
     {
         int RNG = Random.Range(0, 100);
-        if (RNG <= 5 * _currentWave && _currentWave >= 3) //Beam enemy
+        if (RNG <= 5 * _currentWave && _currentWave >= 3) //Mine Layer enemy
+        {
+            _enemyToSpawnID = 3;
+            return _enemyPrefab[3];
+        }
+        else if (RNG <= 10 * _currentWave && _currentWave >= 3) //Beam enemy
         {
             _enemyToSpawnID = 2;
             return _enemyPrefab[2];
         }
-        else if (RNG <= 10 * _currentWave && _currentWave >= 2) //Curve enemy
+        else if (RNG <= 15 * _currentWave && _currentWave >= 2) //Curve enemy
         {
             _enemyToSpawnID = 1;
             return _enemyPrefab[1];
@@ -126,4 +131,6 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         GameObject explosion = Instantiate(_explosionPrefab, position, Quaternion.identity);
         Destroy(explosion, 2.63f);
     }
+
+    public int CurrentWave { get { return _currentWave; } }
 }

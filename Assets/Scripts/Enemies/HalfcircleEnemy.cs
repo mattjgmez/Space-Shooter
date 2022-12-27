@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class HalfcircleEnemy : Enemy
 {
-    [SerializeField] bool _moveRight;
     [SerializeField] float _rotationSpeed;
+
+    bool _moveRight;
 
     protected override void HandleMovement()
     {

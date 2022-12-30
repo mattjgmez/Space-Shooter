@@ -21,7 +21,7 @@ public class SmartMine : Collectable
 
     IEnumerator FindTargetPosition()
     {
-        while (!_targetFound)
+        while (!_targetFound && _player != null)
         {
             _targetDistance = Vector3.Distance(transform.position, _player.transform.position);
 
@@ -30,7 +30,8 @@ public class SmartMine : Collectable
             yield return null;
         }
 
-        _targetPosition = _player.transform.position;
+        if (_player != null)
+            _targetPosition = _player.transform.position;
     }
 
     protected override void HandleMovement()

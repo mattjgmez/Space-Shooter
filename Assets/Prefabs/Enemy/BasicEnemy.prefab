@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 4936302855618558473}
   - component: {fileID: -2299657476585267039}
   - component: {fileID: 4724135452856808718}
+  - component: {fileID: 9077515745718592029}
   m_Layer: 9
   m_Name: BasicEnemy
   m_TagString: Enemy
@@ -185,12 +186,12 @@ SpriteRenderer:
   m_SortingLayerID: -1091817389
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 46813a6ed062ac24997743342717f689, type: 3}
-  m_Color: {r: 0.49411762, g: 1, b: 0.94282097, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 78ceea19c725a6c4d8105fdeedbdb19d, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5.12, y: 5.1212506}
+  m_Size: {x: 6, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -213,8 +214,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 6, y: 4}
-    newSize: {x: 5.12, y: 5.1212506}
+    oldSize: {x: 7.0588236, y: 4.7058825}
+    newSize: {x: 6, y: 4}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -355,11 +356,35 @@ MonoBehaviour:
   _bounds_X: 14
   _bounds_Y: 10
   _baseShieldChance: 100
+  _shootsPowerups: 1
   _laserSound: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   _shieldHit: {fileID: 8300000, guid: a62f0e4a46d1edb4390a2a0d0ed021af, type: 3}
   _shieldDestroyed: {fileID: 8300000, guid: 4d631691c6d7b3e408937dc727a9b927, type: 3}
   _enemyProjectile: {fileID: 6628742992468292316, guid: 2eff5a50d27378942aed63510975365a, type: 3}
   _shieldObject: {fileID: 8925520298377179374}
+--- !u!114 &9077515745718592029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4696202680217212170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e91f6bf14a3987468b7bc41d7430ecf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _box:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 0.5
+  _direction: {x: -0, y: -1}
+  _distance: 19
+  _mask:
+    serializedVersion: 2
+    m_Bits: 3072
 --- !u!1 &8822821960991845347
 GameObject:
   m_ObjectHideFlags: 0

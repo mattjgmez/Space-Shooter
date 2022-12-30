@@ -63,26 +63,19 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     GameObject RollEnemy()
     {
         int RNG = Random.Range(0, 100);
-        if (RNG <= 5 * _currentWave && _currentWave >= 3) //Mine Layer enemy
-        {
-            _enemyToSpawnID = 3;
-            return _enemyPrefab[3];
-        }
-        else if (RNG <= 10 * _currentWave && _currentWave >= 3) //Beam enemy
-        {
-            _enemyToSpawnID = 2;
-            return _enemyPrefab[2];
-        }
-        else if (RNG <= 15 * _currentWave && _currentWave >= 2) //Curve enemy
-        {
-            _enemyToSpawnID = 1;
-            return _enemyPrefab[1];
-        }
-        else //Basic enemy
-        {
-            _enemyToSpawnID = 0;
-            return _enemyPrefab[0];
-        }
+
+        if (RNG <= 3 * _currentWave && _currentWave >= 4)
+            _enemyToSpawnID = 4; //Smart enemy
+        else if (RNG <= 5 * _currentWave && _currentWave >= 3)
+            _enemyToSpawnID = 3; //Mine Layer enemy
+        else if (RNG <= 8 * _currentWave && _currentWave >= 3)
+            _enemyToSpawnID = 2; //Beam enemy
+        else if (RNG <= 10 * _currentWave && _currentWave >= 2)
+            _enemyToSpawnID = 1; //Curve enemy
+        else
+            _enemyToSpawnID = 0; //Basic enemy
+
+        return _enemyPrefab[_enemyToSpawnID];
     }
 
     void SpawnEnemy(GameObject enemyType)

@@ -5193,6 +5193,7 @@ MonoBehaviour:
   _bounds_X: 14
   _bounds_Y: 6
   _baseShieldChance: 5
+  _shootsPowerups: 0
   _laserSound: {fileID: 8300000, guid: 631803fe07fbc2f4c84bf67fdd7801cb, type: 3}
   _shieldHit: {fileID: 8300000, guid: a62f0e4a46d1edb4390a2a0d0ed021af, type: 3}
   _shieldDestroyed: {fileID: 8300000, guid: 4d631691c6d7b3e408937dc727a9b927, type: 3}

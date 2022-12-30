@@ -875,11 +875,11 @@ MonoBehaviour:
   - {fileID: 8935155190258695280, guid: 0386b5610a9974b469a568a4913cdbe9, type: 3}
   - {fileID: 1373525497221026936, guid: 78bcea83eb5922a459bdd61e0e9fddc9, type: 3}
   - {fileID: 3757094003839672304, guid: 7687806abcf73b94ea14cef55f8cc0a1, type: 3}
+  - {fileID: 3992954048039216353, guid: 703154cda986d2a4d8285400fabc2925, type: 3}
   _powerupPrefabs:
   - {fileID: 8541494985734023923, guid: 4a645c81741341742b0c60c239353d9f, type: 3}
   - {fileID: 567549708935829126, guid: 6fa9c54b39b3a8746b295a16dba858e7, type: 3}
   - {fileID: 2946478115778292679, guid: 44e5ed39b2746cf478dd3d4ca5fec48f, type: 3}
-  - {fileID: 7676970943839480874, guid: 41217354ef7c81c4cae76c6867a36721, type: 3}
   _rarePowerupPrefabs:
   - {fileID: 660210350774247413, guid: bcf915f72ae49a94c944e3cdff683034, type: 3}
   - {fileID: 4797893924104868189, guid: 164716a879f346941a5b48110259bf23, type: 3}
@@ -7174,7 +7174,7 @@ GameObject:
   - component: {fileID: 1485029884}
   - component: {fileID: 1485029891}
   - component: {fileID: 1485029890}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -7276,7 +7276,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1485029883}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -4.62, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:

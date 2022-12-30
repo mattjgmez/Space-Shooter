@@ -11,8 +11,10 @@ public class BeamEnemy : Enemy
 
     bool _firingWeapon;
 
-    protected override void InheritedUpdate()
+    protected override void Update()
     {
+        base.Update();
+
         if (!_firingWeapon && _player != null) HandleRotation();
         else _rigidbody.angularVelocity = 0;
     }

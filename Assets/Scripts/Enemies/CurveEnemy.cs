@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HalfcircleEnemy : Enemy
+public class CurveEnemy : Enemy
 {
     [SerializeField] float _rotationSpeed;
 

@@ -43,5 +43,12 @@ public class Laser : MonoBehaviour
             if (!_isBeam)
                 Destroy(gameObject);
         }
+
+        if (other.tag == "Powerup" && _isEnemy)
+        {
+            SpawnManager.Instance.SpawnExplosion(other.transform.position);
+            Destroy(other.gameObject);
+            Destroy(gameObject);
+        }
     }
 }

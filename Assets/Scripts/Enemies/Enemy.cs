@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float _speed;
     [SerializeField] protected float _bounds_X = 14, _bounds_Y = 10;
     [SerializeField] protected int _baseShieldChance = 5;
+    [SerializeField] protected bool _shootsPowerups;
     [SerializeField] protected AudioClip _laserSound, _shieldHit, _shieldDestroyed;
     [SerializeField] protected GameObject _enemyProjectile;
     [SerializeField] protected GameObject _shieldObject;
@@ -19,14 +20,18 @@ public class Enemy : MonoBehaviour
     protected Rigidbody2D _rigidbody;
     protected SpriteRenderer _shieldSprite;
     protected ParticleSystem _shieldParticleSystem;
+    protected Boxcaster _boxcaster;
     protected Color32 _shieldColor;
 
-    void Start()
+    protected virtual void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
         _collider = GetComponent<BoxCollider2D>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _audioSource = GetComponent<AudioSource>();
+
+        if (_shootsPowerups)
+            _boxcaster = GetComponent<Boxcaster>();
 
         _shieldSprite = _shieldObject.GetComponent<SpriteRenderer>();
         _shieldParticleSystem = _shieldObject.GetComponent<ParticleSystem>();
@@ -38,17 +43,18 @@ public class Enemy : MonoBehaviour
         EnableShield();
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if (_isDead)
             return;
 
-        if (Time.time > _weaponCooldown && _player)
+        if (Time.time > _weaponCooldown && _player && (!_shootsPowerups || _boxcaster.Hits.Length > 0))
+        {
             FireWeapon();
+            _boxcaster.ClearHits();
+        }
 
         HandleMovement();
-
-        InheritedUpdate();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -126,6 +132,4 @@ public class Enemy : MonoBehaviour
             _shieldSprite.color = _shieldColor;
         }
     }
-
-    protected virtual void InheritedUpdate() { }
 }

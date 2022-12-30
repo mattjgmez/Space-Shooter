@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 567549708935829124}
   - component: {fileID: 58478546705075620}
   - component: {fileID: 567549708935829127}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ShieldPowerup
-  m_TagString: Untagged
+  m_TagString: Powerup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

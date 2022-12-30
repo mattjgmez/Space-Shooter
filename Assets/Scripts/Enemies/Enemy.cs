@@ -51,7 +51,8 @@ public class Enemy : MonoBehaviour
         if (Time.time > _weaponCooldown && _player && (!_shootsPowerups || _boxcaster.Hits.Length > 0))
         {
             FireWeapon();
-            _boxcaster.ClearHits();
+            if (_shootsPowerups)
+                _boxcaster.ClearHits();
         }
 
         HandleMovement();
@@ -125,7 +126,7 @@ public class Enemy : MonoBehaviour
     protected virtual void EnableShield()
     {
         int RNG = Random.Range(0, 100);
-        if (RNG <= _baseShieldChance-- * SpawnManager.Instance.CurrentWave && SpawnManager.Instance.CurrentWave >= 4)
+        if (RNG <= _baseShieldChance-- * SpawnManager.Instance.CurrentWave && SpawnManager.Instance.CurrentWave >= 5)
         {
             _shieldHealth = 2;
             _shieldColor.a = 170;

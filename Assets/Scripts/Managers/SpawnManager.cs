@@ -35,8 +35,8 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         UIManager.Instance.UpdateWaveText(_currentWave);
 
         //Set wave enemy limit and spawn delay exponentially
-        int enemyAmount = (int)((_currentWave + 3) * Mathf.Pow(1 + 0.25f, 2));
-        _spawnDelay = Mathf.Clamp(_spawnDelay * Mathf.Pow(1 - .1f, 2), 0.5f, 3f);
+        int enemyAmount = (int)((_currentWave + 3) * Mathf.Pow(1 + 0.05f, 2));
+        _spawnDelay = Mathf.Clamp(_spawnDelay * Mathf.Pow(1 - .05f, 2), 0.5f, 3f);
 
         StartCoroutine(SpawnEnemyCoroutine(enemyAmount));
     }

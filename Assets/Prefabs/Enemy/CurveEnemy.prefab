@@ -5445,6 +5445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e91f6bf14a3987468b7bc41d7430ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isArray: 1
   _box:
     serializedVersion: 2
     x: 0

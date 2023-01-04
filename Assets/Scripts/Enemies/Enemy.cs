@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -55,6 +54,9 @@ public class Enemy : MonoBehaviour
                 _boxcaster.ClearHits();
         }
 
+        if (Input.GetKeyDown(KeyCode.K))
+            TakeDamage();
+
         HandleMovement();
     }
 
@@ -69,9 +71,6 @@ public class Enemy : MonoBehaviour
         if (other.tag == "Projectile")
         {
             Destroy(other.gameObject);
-
-            if (_player != null)
-                _player.SetScore(10);
 
             TakeDamage();
         }
@@ -116,6 +115,9 @@ public class Enemy : MonoBehaviour
 
     protected virtual void TriggerDeath()
     {
+        if (_player != null)
+            _player.SetScore(10);
+
         _isDead = true;
         _collider.enabled = false;
         SpawnManager.Instance.SpawnExplosion(transform.position);

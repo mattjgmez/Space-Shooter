@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -201,12 +200,12 @@ public class Player : MonoBehaviour
         }
         else if (_lives == 2)
         {
-            StartCoroutine(CameraManager.Instance.CameraShake());
+            StartCoroutine(CameraManager.Instance.CameraShake(.25f));
             _rightEngineFire.SetActive(true);
         }
         else if (_lives == 1)
         {
-            StartCoroutine(CameraManager.Instance.CameraShake());
+            StartCoroutine(CameraManager.Instance.CameraShake(.25f));
             _leftEngineFire.SetActive(true);
         }
     }
@@ -220,7 +219,7 @@ public class Player : MonoBehaviour
         UIManager.Instance.ShowGameOverText();
         SpawnManager.Instance.SpawnExplosion(transform.position);
 
-        Destroy(gameObject, 1);
+        gameObject.SetActive(false);
     }
 
     #region Collectable Methods

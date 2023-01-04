@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 660210350774247368}
   - component: {fileID: 660210350774247369}
   - component: {fileID: 660210350774247414}
-  - component: {fileID: 660210350774247415}
   - component: {fileID: 660210350774247412}
   m_Layer: 11
   m_Name: MissilePowerup
@@ -76,8 +75,8 @@ SpriteRenderer:
   m_SortingLayerID: -1091817389
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0.57161915, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: e9d7374914443f844829b08e19d033bd, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -104,7 +103,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 6, y: 4}
     newSize: {x: 5.12, y: 5.12}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -113,26 +112,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.2301922, y: 3.277505}
   m_EdgeRadius: 0
---- !u!95 &660210350774247415
-Animator:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 660210350774247413}
-  m_Enabled: 0
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a7d52a0e2323f9d40b7a1df38d2b6229, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &660210350774247412
 MonoBehaviour:
   m_ObjectHideFlags: 0

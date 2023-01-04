@@ -12,12 +12,14 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     [SerializeField] GameObject _explosionPrefab;
 
     bool _stopSpawning = false;
-    int _currentWave = 0;
+    public int _currentWave = 0;
     int _spawnedEnemies = 0;
     int _enemyToSpawnID;
     float _spawnDelay = 5f;
+    List<GameObject> _activeEnemies = new List<GameObject>();
 
-    public List<GameObject> ActiveEnemies;
+    public List<GameObject> ActiveEnemies { get { return _activeEnemies; } set { _activeEnemies = value; } }
+    public int CurrentWave { get { return _currentWave; } }
 
     public void StartSpawning()
     {
@@ -35,8 +37,18 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         UIManager.Instance.UpdateWaveText(_currentWave);
 
         //Set wave enemy limit and spawn delay exponentially
-        int enemyAmount = (int)((_currentWave + 3) * Mathf.Pow(1 + 0.05f, 2));
-        _spawnDelay = Mathf.Clamp(_spawnDelay * Mathf.Pow(1 - .05f, 2), 0.5f, 3f);
+        //Sets amount to 1 in boss waves
+        int enemyAmount;
+        if (_currentWave % 5 == 0)
+        {
+            enemyAmount = 1;
+            _spawnDelay = 1;
+        }
+        else 
+        {
+            enemyAmount = (int)((_currentWave + 3) * Mathf.Pow(1 + 0.05f, 2));
+            _spawnDelay = Mathf.Clamp(_spawnDelay * Mathf.Pow(1 - .05f, 2), 0.5f, 3f);
+        }
 
         StartCoroutine(SpawnEnemyCoroutine(enemyAmount));
     }
@@ -54,7 +66,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             yield return new WaitForSeconds(_spawnDelay);
         }
 
-        while (!_stopSpawning && ActiveEnemies.Count > 0) //Prevents next wave from spawning until all active enemies are slain
+        while (!_stopSpawning && _activeEnemies.Count > 0) //Prevents next wave from spawning until all active enemies are slain
             yield return null;
 
         StartWave();
@@ -64,7 +76,9 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     {
         int RNG = Random.Range(0, 100);
 
-        if (RNG <= 3 * _currentWave && _currentWave >= 4)
+        if (_currentWave % 5 == 0)
+            _enemyToSpawnID = 5; //Boss wave
+        else if (RNG <= 3 * _currentWave && _currentWave >= 4)
             _enemyToSpawnID = 4; //Smart enemy
         else if (RNG <= 5 * _currentWave && _currentWave >= 3)
             _enemyToSpawnID = 3; //Mine Layer enemy
@@ -83,16 +97,20 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         Vector3 spawnPosition = new(Random.Range(-bounds_X, bounds_X), 10, 0);
         Vector3 spawnRotation = Vector3.zero;
 
-        if (_enemyToSpawnID == 1)
+        if (_enemyToSpawnID == 5)
+        {
+            spawnPosition = new Vector3(0, 12, 0);
+        }
+        else if (_enemyToSpawnID == 1)
         {
             //Randomly select left or right and set position/rotation accordingly
             bool isLeft = Random.Range(0, 2) == 0;
-            spawnPosition = new Vector3(isLeft ? -17 : 17, 2.5f, 0);
-            spawnRotation = new Vector3(0, 0, isLeft ? 14.3f : -14.3f);
+            spawnPosition = new (isLeft ? -17 : 17, 2.5f, 0);
+            spawnRotation = new (0, 0, isLeft ? 14.3f : -14.3f);
         }
 
         GameObject newEnemy = Instantiate(enemyType, spawnPosition, Quaternion.Euler(spawnRotation), _enemyContainer);
-        ActiveEnemies.Add(newEnemy);
+        _activeEnemies.Add(newEnemy);
     }
 
     IEnumerator SpawnPowerup()
@@ -124,6 +142,4 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         GameObject explosion = Instantiate(_explosionPrefab, position, Quaternion.identity);
         Destroy(explosion, 2.63f);
     }
-
-    public int CurrentWave { get { return _currentWave; } }
 }

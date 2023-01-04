@@ -37,4 +37,11 @@ public class GameManager : MonoSingleton<GameManager>
         Time.timeScale = 1f;
         SceneManager.LoadScene(1); //Loads current scene
     }
+
+    public IEnumerator HitStop(float duration)
+    {
+        Time.timeScale = 0.001f;
+        yield return new WaitForSecondsRealtime(duration);
+        Time.timeScale = 1f;
+    }
 }

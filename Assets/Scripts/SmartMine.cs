@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SmartMine : Collectable
@@ -10,12 +9,10 @@ public class SmartMine : Collectable
     bool _targetFound;
     float _targetDistance;
     Vector3 _targetPosition;
-    GameObject _player;
 
-    void Start()
+    protected override void Start()
     {
-        _player = GameObject.Find("Player");
-
+        base.Start();
         StartCoroutine(FindTargetPosition());
     }
 

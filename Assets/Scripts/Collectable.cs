@@ -8,14 +8,26 @@ public class Collectable : MonoBehaviour
     [SerializeField] int _collectableID; 
     [SerializeField] AudioClip _audioClip;
 
-    void Update()
+    protected GameObject _player;
+
+    protected virtual void Start()
     {
-        HandleMovement();
+        _player = GameObject.Find("Player");
+    }
+
+    protected virtual void Update()
+    {
+        if (Input.GetKey(KeyCode.C) && Vector3.Distance(transform.position, _player.transform.position) < 4f) 
+            MoveToPlayer(); 
+        else 
+            HandleMovement();
 
         if (transform.position.y < _bounds_Y)
+        {
+            if (transform.parent != null)
+                Destroy(transform.parent.gameObject);
             Destroy(gameObject);
-
-        InheritedUpdate();//Used by inherited scripts to add onto Update    
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -26,6 +38,11 @@ public class Collectable : MonoBehaviour
     protected virtual void HandleMovement()
     {
         transform.Translate(_speed * Time.deltaTime * Vector3.down, Space.World);
+    }
+
+    protected virtual void MoveToPlayer()
+    {
+        transform.Translate(_speed * 1.25f * Time.deltaTime * -(transform.position - _player.transform.position), Space.World);
     }
 
     protected virtual void OnCollected(Collider2D other)
@@ -40,6 +57,4 @@ public class Collectable : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    protected virtual void InheritedUpdate() { } 
 }

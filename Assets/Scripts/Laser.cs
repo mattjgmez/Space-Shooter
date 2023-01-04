@@ -7,16 +7,6 @@ public class Laser : MonoBehaviour
     [SerializeField] bool _isEnemy;
     [SerializeField] bool _isBeam;
 
-    Player _player;
-
-    private void Start()
-    {
-        _player = GameObject.Find("Player").GetComponent<Player>();
-
-        if (_player == null)
-            Debug.LogError("Player is NULL.");
-    }
-
     void Update()
     {
         HandleMovement();
@@ -39,7 +29,7 @@ public class Laser : MonoBehaviour
     {
         if (other.tag == "Player" && _isEnemy)
         {
-            _player.TakeDamage();
+            other.GetComponent<Player>().TakeDamage();
             if (!_isBeam)
                 Destroy(gameObject);
         }
@@ -48,7 +38,9 @@ public class Laser : MonoBehaviour
         {
             SpawnManager.Instance.SpawnExplosion(other.transform.position);
             Destroy(other.gameObject);
-            Destroy(gameObject);
+
+            if (!_isBeam)
+                Destroy(gameObject);
         }
     }
 }

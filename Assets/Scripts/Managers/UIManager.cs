@@ -8,9 +8,10 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] TMP_Text _scoreText, _ammoText, _missileText, _waveText;
     [SerializeField] Sprite[] _liveSprites;
     [SerializeField] Image _liveImage, _boostUI;
-    [SerializeField] GameObject _pauseUI, _gameOverUI;
+    [SerializeField] GameObject _pauseUI, _gameOverUI, _bossWaveText;
+    [SerializeField] Slider _bossHealthBar;
 
-    bool _gameOver;
+    public bool _gameOver;
     Color _textColor;
 
     void Start()
@@ -43,8 +44,8 @@ public class UIManager : MonoSingleton<UIManager>
 
     public void ShowGameOverText()
     {
-        _gameOverUI.SetActive(true);
         _gameOver = true;
+        StopAllCoroutines();
         StartCoroutine(GameOverTextBlink());
     }
 
@@ -80,11 +81,13 @@ public class UIManager : MonoSingleton<UIManager>
     {
         _waveText.text = $"WAVE {currentWave}";
         StartCoroutine(WaveText());
+
+        if (currentWave % 5 == 0)
+            StartCoroutine(BossWaveTextBlink());
     }
 
     public IEnumerator WaveText()
     {
-
         _textColor = Color.white;
         _waveText.color = _textColor;
         yield return new WaitForSeconds(1);
@@ -98,5 +101,46 @@ public class UIManager : MonoSingleton<UIManager>
 
         _textColor.a -= 0;
         _waveText.color = _textColor;
+    }
+
+    IEnumerator BossWaveTextBlink()
+    {
+        float timer = Time.time + 3;
+        while (Time.time < timer)
+        {
+            _bossWaveText.SetActive(!_bossWaveText.activeSelf);
+            yield return new WaitForSeconds(0.5f);
+        }
+        _bossWaveText.SetActive(false);
+    }
+
+    public IEnumerator InitializeBossHealthBar(float maxHealth)
+    {
+        _bossHealthBar.maxValue = maxHealth;
+        _bossHealthBar.value = maxHealth;
+
+        while (_bossHealthBar.transform.localScale.x < 1)
+        {
+            _bossHealthBar.transform.localScale += Vector3.one * Time.deltaTime;
+            yield return null;
+        }
+        _bossHealthBar.transform.localScale = Vector3.one;
+    }
+
+    public void UpdateBossHealthBar(float currentHealth)
+    {
+        _bossHealthBar.value = currentHealth;
+        if (currentHealth <= 0)
+            StartCoroutine(DisableBossHealthBar());
+    }
+
+    IEnumerator DisableBossHealthBar()
+    {
+        while (_bossHealthBar.transform.localScale.x > 0)
+        {
+            _bossHealthBar.transform.localScale -= Vector3.one * Time.deltaTime;
+            yield return null;
+        }
+        _bossHealthBar.transform.localScale = Vector3.zero;
     }
 }

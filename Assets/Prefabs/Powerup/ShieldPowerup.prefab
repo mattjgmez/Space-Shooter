@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 567549708935829124}
   - component: {fileID: 58478546705075620}
   - component: {fileID: 567549708935829127}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ShieldPowerup
-  m_TagString: Untagged
+  m_TagString: Powerup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -146,6 +146,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 3
-  _minY: -10
-  _powerupID: 2
-  _clip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  _bounds_Y: -10
+  _collectableID: 2
+  _audioClip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}

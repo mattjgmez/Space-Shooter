@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6614177807298778533}
   - component: {fileID: 3635580755017400923}
   - component: {fileID: 3959179956777898935}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Laser
   m_TagString: Projectile
   m_Icon: {fileID: 0}
@@ -100,10 +100,10 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -1.48}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 1}
     oldSize: {x: 1, y: 3}
     newSize: {x: 1, y: 3}
     adaptiveTilingThreshold: 0.5
@@ -147,4 +147,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 20
-  _maxY: 9
+  _bounds_Y: 10
+  _isEnemy: 0
+  _isBeam: 0

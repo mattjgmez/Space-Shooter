@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Projectile
+  - Enemy
+  - Powerup
   layers:
   - Default
   - TransparentFX
@@ -15,9 +17,9 @@ TagManager:
   - 
   - 
   - Post Processing
-  - 
-  - 
-  - 
+  - Enemy
+  - Player
+  - Powerup
   - 
   - 
   - 

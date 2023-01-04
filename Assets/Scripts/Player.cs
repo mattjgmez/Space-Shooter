@@ -3,69 +3,127 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    #region Serialized Variables
     [SerializeField] float _speed = 10;
-    [SerializeField] float _maxBoost = 10;
+    [SerializeField] float _totalSpeedBonus = 0f;
+    [SerializeField] float _boostAmount = 5;
+    [SerializeField] float _boostDuration = 2;
+    [SerializeField] float _boostCooldown = 4;
     [SerializeField] float _bounds_X = 15.5f, _bounds_Y = 7.5f;
     [SerializeField] float _fireRate = 0.25f;
+    [SerializeField] float _reloadTime = 3f;
     [SerializeField] int _lives = 3;
-    [SerializeField] int _score;
-    [SerializeField] GameObject _projectilePrefab;
-    [SerializeField] GameObject _tripleShotPrefab; 
+    [SerializeField] int _score = 0;
+    [SerializeField] int _maxAmmo = 15;
+    [SerializeField] GameObject _laserPrefab;
+    [SerializeField] GameObject _tripleShotPrefab;
+    [SerializeField] GameObject _missilePrefab;
     [SerializeField] GameObject _shieldObject;
     [SerializeField] GameObject _rightEngineFire, _leftEngineFire;
-    [SerializeField] AudioClip _laserSound, _explosionSound;
-
-    bool _tripleShot;
-    bool _speedUp;
+    [SerializeField] AudioClip _laserSound, _missileSound;
+    [SerializeField] AudioClip _shieldHit, _shieldDestroyed;
+    [SerializeField] AudioClip _reloadSound;
+    #endregion
+    #region Local Variables
+    bool _canBoost = true;
     bool _shield;
+    bool _reloading;
+    int _shieldHealth;
+    int _currentAmmo;
+    int _fireMode; //0 laser, 1 triple shot, 2 missile
+    int _currentMissiles = 5;
     float _nextFire;
-    float _currentBoost;
     AudioSource _audioSource;
+    ParticleSystem _particleSystem, _shieldParticleSystem;
+    SpriteRenderer _shieldSprite;
+    BoxCollider2D _collider;
+    Color32 _shieldColor;
+    #endregion
 
     void Start()
     {
         transform.position = Vector3.zero;
 
         _audioSource = GetComponent<AudioSource>();
+        _particleSystem = GetComponent<ParticleSystem>();
+        _collider = GetComponent<BoxCollider2D>();
+
+        _shieldSprite = _shieldObject.GetComponent<SpriteRenderer>();
+        _shieldParticleSystem = _shieldObject.GetComponent<ParticleSystem>();
+
+        _shieldColor = _shieldSprite.color;
+        _currentAmmo = _maxAmmo;
+        UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
+        UIManager.Instance.UpdateMissiles(_currentMissiles);
 
         if (_audioSource == null)
             Debug.LogError("AudioSource = NULL.");
-
-        _currentBoost = _maxBoost;
+        if (_particleSystem == null)
+            Debug.LogError("ParticleSystem = NULL.");
     }
 
     void Update()
     {
+        if (_lives <= 0)
+            return;
+
+        //change fire mode to 0 if 2 or to 2 if 0
+        //does nothing if triple shot is active
+        if (Input.GetKeyDown(KeyCode.R) && _fireMode != 1 && _currentMissiles > 0)
+            _fireMode = _fireMode == 0 ? 2 : 0;
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _canBoost)
+            StartCoroutine(BoostCoroutine());
+
         HandleMovement();
 
-        if (Input.GetKey(KeyCode.Space) && Time.time > _nextFire)
+        if (Input.GetKey(KeyCode.Space) && Time.time > _nextFire && !_reloading)
             HandleShooting();
+
+        //Used for debugging methods
+        if (Input.GetKeyDown(KeyCode.Tab))
+            TakeDamage();
     }
 
     void HandleShooting()
     {
         _nextFire = Time.time + _fireRate;
 
-        //Instantiates triple shot prefab if powerup is active, otherwise fires single laser prefab
-        if (_tripleShot) Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
-        else Instantiate(_projectilePrefab, transform.position + new Vector3(0, 1.07f, 0f), Quaternion.identity);
+        //Instantiates projectile prefab based on current Fire Mode
+        switch (_fireMode)
+        {
+            case 0://laser
+                if (_currentAmmo <= 0)
+                    return;
+                _currentAmmo--;
+                UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
+                if (_currentAmmo <= 0)
+                    StartCoroutine(ReloadCoroutine());
+                Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.07f, 0f), Quaternion.identity);
+                _audioSource.PlayOneShot(_laserSound);
+                break;
 
-        _audioSource.PlayOneShot(_laserSound);
+            case 1://triple shot
+                Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity);
+                _audioSource.PlayOneShot(_laserSound);
+                break;
+
+            case 2://missile
+                _currentMissiles--;
+                if (_currentMissiles <= 0)
+                    _fireMode = 0;
+                UIManager.Instance.UpdateMissiles(_currentMissiles);
+                Instantiate(_missilePrefab, transform.position, Quaternion.identity);
+                _audioSource.PlayOneShot(_missileSound);
+                break;
+        }
     }
 
     void HandleMovement()
     {
         Vector2 direction = new (Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        //Creates a local variable to change player's speed based on powerups and input
-        float currentSpeed = _speed;
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-        {
-            _currentBoost -= 1 * Time.deltaTime;
-            currentSpeed += 5;
-        }
-        if (_speedUp) currentSpeed *= 2f;
-
+        float currentSpeed = _speed + _totalSpeedBonus;
         transform.Translate(currentSpeed * Time.deltaTime * direction);
 
         //Makes player object wrap when leaving the left and right boundaries
@@ -76,62 +134,148 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -_bounds_Y, _bounds_Y), 0);
     }
 
+    IEnumerator BoostCoroutine()
+    {
+        _canBoost = false;
+        _totalSpeedBonus += _boostAmount;
+        _particleSystem.Play(false);
+        StartCoroutine(UIManager.Instance.BoostUICoroutine(_boostCooldown));
+
+        yield return new WaitForSeconds(_boostDuration);
+        _totalSpeedBonus -= _boostAmount;
+        _particleSystem.Stop();
+
+        yield return new WaitForSeconds(_boostCooldown - _boostDuration);
+        _canBoost = true;
+    }
+
+    IEnumerator ReloadCoroutine()
+    {
+        _reloading = true;
+        yield return new WaitForSeconds(0.2f);
+
+        UIManager.Instance.UpdateAmmo("Reloading .");
+        yield return new WaitForSeconds(_reloadTime / 3);
+
+        UIManager.Instance.UpdateAmmo("Reloading . .");
+        yield return new WaitForSeconds(_reloadTime / 3);
+
+        UIManager.Instance.UpdateAmmo("Reloading . . .");
+        yield return new WaitForSeconds(_reloadTime / 3);
+
+        _currentAmmo = _maxAmmo;
+        _reloading = false;
+        UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
+        _audioSource.PlayOneShot(_reloadSound);
+    }
+
     public void TakeDamage()
     {
         if (_shield)
         {
-            _shield = false;
-            _shieldObject.GetComponent<SpriteRenderer>().enabled = false;
+            _shieldHealth--;
+            if (_shieldHealth > 0)
+            {
+                _shieldColor.a -= 85;
+                _shieldSprite.color = _shieldColor;
+                _audioSource.PlayOneShot(_shieldHit);
+            }
+            if (_shieldHealth == 0)
+            {
+                _shieldColor.a = 0;
+                _shieldSprite.color = _shieldColor;
+                _shieldParticleSystem.Play();
+                _audioSource.PlayOneShot(_shieldDestroyed);
+                _shield = false;
+            }
             return;
         }
 
-        _lives -= 1;
+        _lives--;
         UIManager.Instance.UpdateLives(_lives);
 
         if (_lives < 1)
         {
-            SpawnManager.Instance.OnPlayerDeath();
-            GameManager.Instance.GameOver();
-            UIManager.Instance.ShowGameOverText();
-            _audioSource.PlayOneShot(_explosionSound);
-            Destroy(gameObject);
+            TriggerDeath();
         }
         else if (_lives == 2)
+        {
+            StartCoroutine(CameraManager.Instance.CameraShake(.25f));
             _rightEngineFire.SetActive(true);
+        }
         else if (_lives == 1)
+        {
+            StartCoroutine(CameraManager.Instance.CameraShake(.25f));
             _leftEngineFire.SetActive(true);
+        }
     }
 
-    public void TripleShotEnable()
+    private void TriggerDeath()
     {
-        _tripleShot = true;
-        StartCoroutine(TripleShotDisable());
+        _collider.enabled = false;
+
+        SpawnManager.Instance.OnPlayerDeath();
+        GameManager.Instance.GameOver();
+        UIManager.Instance.ShowGameOverText();
+        SpawnManager.Instance.SpawnExplosion(transform.position);
+
+        gameObject.SetActive(false);
+    }
+
+    #region Collectable Methods
+    public void TriggerCollectable(int ID)
+    {
+        switch (ID)
+        {
+            case 0: //Triple Shot
+                _fireMode = 1;
+                StartCoroutine(TripleShotDisable());
+                break;
+
+            case 1: //Speedup
+                _totalSpeedBonus += 10;
+                StartCoroutine(SpeedUpDisable());
+                break;
+
+            case 2: //Shield
+                _shield = true;
+                _shieldHealth = 3;
+                _shieldColor.a = 255;
+                _shieldSprite.color = _shieldColor;
+                break;
+
+            case 3: //Ammo
+                _currentAmmo = _maxAmmo;
+                UIManager.Instance.UpdateAmmo(_currentAmmo.ToString());
+                break;
+
+            case 4: //Health
+                if (_lives < 3)
+                    _lives++;
+                UIManager.Instance.UpdateLives(_lives);
+                if (_lives == 3) _rightEngineFire.SetActive(false);
+                if (_lives == 2) _leftEngineFire.SetActive(false);
+                break;
+
+            case 5: //Missile
+                _currentMissiles = 5;
+                UIManager.Instance.UpdateMissiles(_currentMissiles);
+                break;
+        }
     }
 
     IEnumerator TripleShotDisable()
     {
         yield return new WaitForSeconds(5);
-        _tripleShot = false;
-    }
-
-    public void SpeedUpEnable()
-    {
-        _speedUp = true;
-        StartCoroutine(SpeedUpDisable());
+        _fireMode = 0;
     }
 
     IEnumerator SpeedUpDisable()
     {
         yield return new WaitForSeconds(3);
-        _speedUp = false;
+        _totalSpeedBonus -= 10;
     }
-
-    public void ShieldEnable()
-    {
-        _shield = true;
-        _shieldObject.GetComponent<SpriteRenderer>().enabled = true;
-        StartCoroutine(SpeedUpDisable());
-    }
+    #endregion
 
     public void SetScore(int amount)
     {

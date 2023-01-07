@@ -80,9 +80,11 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.Space) && Time.time > _nextFire && !_reloading)
             HandleShooting();
 
+#if UNITY_EDITOR
         //Used for debugging methods
         if (Input.GetKeyDown(KeyCode.Tab))
-            TakeDamage();
+            TriggerCollectable(2);
+#endif
     }
 
     void HandleShooting()
